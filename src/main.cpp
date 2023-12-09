@@ -2,6 +2,7 @@
 #include "RegisterStatus.h"
 #include "ReservationStation.h"
 #include "RegisterFile.h"
+#include "Instruction.h"
 
 using namespace std;
 
