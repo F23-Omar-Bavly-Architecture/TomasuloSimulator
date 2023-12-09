@@ -43,12 +43,12 @@ public:
                 Inst.erase(remove(Inst.begin(), Inst.end(), ','), Inst.end());
                 vector<string> vec = splitstring(Inst, " ");
                 op = vec[0];
-                if (op == "ADD" || op == "NAND" || op == "DIV") {
+                if (op == "ADD" || op == "NAND" || op == "DIV") { //ADD RD, Rs1, Rs2 //NAND RD, Rs1, Rs2 //DIV RD, Rs1, Rs2
                         RD = vec[1];
                         RS1 = vec[2];
                         RS2 = vec[3];
                 }
-                else if (op == "ADDI") {
+                else if (op == "ADDI") { //ADDI RD, Rs1, imm
                         RD = vec[1];
                         RS1 = vec[2];
                         IMM = vec[3];
@@ -63,17 +63,17 @@ public:
                         vector<string> tempvec = splitstring(vec[2], "(");
                         RS2 = vec[1];
                         offset = tempvec[0];
-                        RS2 = tempvec[1].substr(0, tempvec[1].length() - 1);
+                        RS1 = tempvec[1].substr(0, tempvec[1].length() - 1);
                 }
                 else if (op == "BNE") {//BNE RS1, RS2, offset
                         RS1 = vec[1];
                         RS2 = vec[2];
                         label = vec[3];
                 }
-                else if (op == "CALL") {
+                else if (op == "CALL") {//CALL label
                         label = vec[1];
                 }
-                else if (op == "RET") {
+                else if (op == "RET") {//RET
                         return;
                 }
         }
