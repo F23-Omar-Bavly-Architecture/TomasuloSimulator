@@ -12,7 +12,7 @@ using namespace std;
 // ReservationStation : <string, ReservationStationEntry> key is the name of the reservation station
 
 // ReservationStationEntry : class with the following fields
-// Op : string
+// op : string
 // Vj : string
 // Vk : string
 // Qj : string
@@ -22,7 +22,7 @@ using namespace std;
 // Result : 16 bit int
 
 // Instruction : class with the following fields
-// Op : string
+// op : string
 // Dest : string
 // Src1 : string
 // Src2 : string
@@ -45,8 +45,8 @@ class Tomasulo {
     public:
         RegisterStatus registerStatus;
         ReservationStation reservationStation;
-        //queue<Instruction> instructionQueue;
-        //vector<Instruction> inflightInstructions;
+        queue<Instruction> instructionQueue;
+        vector<Instruction> inflightInstructions;
         array<int, 65536> Memory;
         RegisterFile registerFile;
         uint16_t PC;
@@ -61,37 +61,64 @@ class Tomasulo {
             // Check type of instruction
             // Check for unused reservation station of that type
             Instruction instruction = instructionQueue.front();
-            case(instruction.Op){
-                "LOAD":
+            if (instruction.op == "LOAD"){
+                // check for available load reservation station
+                if(reservationStation.currentLoad < reservationStation.numLoad){
+                    // check for available register
+                    string currentStation = "Load" + to_string(reservationStation.currentLoad);
+                    if(registerStatus.status[instruction.RS1] != ""){ // if not ready
+                        reservationStation.station[currentStation].Qj = registerStatus.status[instruction.RS1];
+                    }else{
+                        reservationStation.station[currentStation].Vj = registerFile[stoi(instruction.RS1)];
+                        reservationStation.station[currentStation].Qj = "";
+                    }
 
-                    break;
-                "STORE":
+                    reservationStation.station[currentStation].A = instruction.offset;
+                    reservationStation.station[currentStation].Busy = true;
+                    registerStatus.status[instruction.RD] = currentStation;
+                    instructionQueue.pop();
+                    inflightInstructions.push_back(instruction);
+                    reservationStation.currentLoad++;
+                }
+            }else if (instruction.op == "STORE"){
+                if(reservationStation.currentStore < reservationStation.numStore){
+                    // check for available register
+                    string currentStation = "Store" + to_string(reservationStation.currentStore);
+                    if(registerStatus.status[instruction.RS1] != ""){ // if not ready
+                        reservationStation.station[currentStation].Qj = registerStatus.status[instruction.RS1];
+                    }else{
+                        reservationStation.station[currentStation].Vj = registerFile[stoi(instruction.RS1)];
+                        reservationStation.station[currentStation].Qj = "";
+                    }
+
+                    if(registerStatus.status[instruction.RS2] != ""){ // if not ready
+                        reservationStation.station[currentStation].Qk = registerStatus.status[instruction.RS2];
+                    }else{
+                        reservationStation.station[currentStation].Vk = registerFile[stoi(instruction.RS2)];
+                        reservationStation.station[currentStation].Qk = "";
+                    }
+
+                    reservationStation.station[currentStation].A = instruction.offset;
+                    reservationStation.station[currentStation].Busy = true;
+                }
+            }else if (instruction.op == "BNE"){
+                if(reservationStation.currentBne < reservationStation.numBne){
                     
-                    break;
-                "BNE":
-                        
-                    break;
-                "CALL":
-                        
-                    break;
-                "RET":
-                            
-                    break;
-                "ADD":
-                                    
-                    break;
-                "ADDI":
-                                        
-                    break;
-                "NAND":
-                                                
-                    break;
-                "DIV":
-                                                            
-                    break;
-                default:
-                    cout << "Invalid instruction" << endl;
-                    break;
+                }
+            }else if (instruction.op == "CALL"){
+
+            }else if (instruction.op == "RET"){
+            
+            }else if (instruction.op == "ADD"){
+            
+            }else if (instruction.op == "ADDI"){
+            
+            }else if (instruction.op == "NAND"){
+
+            }else if (instruction.op == "DIV"){
+            
+            }else{
+                cout << "Invalid instruction" << endl;
             }
 
         };

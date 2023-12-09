@@ -27,9 +27,11 @@ class ReservationStation {
 public:
         map<string, ReservationStationEntry> station;
         int cyclesLoad, cyclesStore, cyclesBne, cyclesCallRet, cyclesAdd, cyclesNand, cyclesDiv;
+        int numLoad, numStore, numBne, numCallRet, numAdd, numNand, numDiv;
+        int currentLoad, currentStore, currentBne, currentCallRet, currentAdd, currentNand, currentDiv;
+
         ReservationStation() {
                 // Prompt for number of each type of reservation station: LOAD, STORE, BNE, CALL/RET, ADD/ADDI, NAND, DIV must be > 0
-                int numLoad, numStore, numBne, numCallRet, numAdd, numNand, numDiv;
                 cout << "Enter number of LOAD reservation stations: ";
                 cin >> numLoad;
                 while(numLoad <= 0) {
