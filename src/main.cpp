@@ -1,7 +1,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-// RegisterStatus : map<string, string> key is the name of the register 
+// RegisterSt : map<string, string> key is the name of the register 
 // and value indicates whcih reservation station will provide the value for the register
 
 // ReservationStation : <string, ReservationStationEntry> key is the name of the reservation station
@@ -36,6 +36,9 @@ using namespace std;
 
 // ClockCycle : int
 
+array<int, 65536> Memory;
+uint16_t pc = 0;
+int clockCycle = 0;
 
 int main(){
 
