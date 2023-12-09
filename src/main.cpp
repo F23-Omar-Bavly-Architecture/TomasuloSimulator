@@ -1,4 +1,9 @@
 #include <bits/stdc++.h>
+#include "RegisterStatus.h"
+#include "ReservationStation.h"
+#include "RegisterFile.h"
+#include "Instruction.h"
+
 using namespace std;
 
 // RegisterSt : map<string, string> key is the name of the register 
@@ -36,9 +41,63 @@ using namespace std;
 
 // ClockCycle : int
 
-array<int, 65536> Memory;
-uint16_t pc = 0;
-int clockCycle = 0;
+class Tomasulo {
+    public:
+        RegisterStatus registerStatus;
+        ReservationStation reservationStation;
+        //queue<Instruction> instructionQueue;
+        //vector<Instruction> inflightInstructions;
+        array<int, 65536> Memory;
+        RegisterFile registerFile;
+        uint16_t PC;
+        int ClockCycle;
+        Tomasulo() {
+            PC = 0;
+            ClockCycle = 0;
+        }
+        void RunClockCycle();
+        void Issue(){
+            // Read instruction from instruction queue
+            // Check type of instruction
+            // Check for unused reservation station of that type
+            Instruction instruction = instructionQueue.front();
+            case(instruction.Op){
+                "LOAD":
+
+                    break;
+                "STORE":
+                    
+                    break;
+                "BNE":
+                        
+                    break;
+                "CALL":
+                        
+                    break;
+                "RET":
+                            
+                    break;
+                "ADD":
+                                    
+                    break;
+                "ADDI":
+                                        
+                    break;
+                "NAND":
+                                                
+                    break;
+                "DIV":
+                                                            
+                    break;
+                default:
+                    cout << "Invalid instruction" << endl;
+                    break;
+            }
+
+        };
+        void Execute();
+        void WriteBack();
+};
 
 int main(){
 
