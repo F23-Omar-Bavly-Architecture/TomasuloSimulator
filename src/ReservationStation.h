@@ -28,7 +28,7 @@ public:
         map<string, ReservationStationEntry> station;
         int cyclesLoad, cyclesStore, cyclesBne, cyclesCallRet, cyclesAdd, cyclesNand, cyclesDiv;
         int numLoad, numStore, numBne, numCallRet, numAdd, numNand, numDiv;
-        int currentLoad, currentStore, currentBne, currentCallRet, currentAdd, currentNand, currentDiv;
+        int currentLoad = 0, currentStore = 0, currentBne =0, currentCallRet = 0, currentAdd = 0, currentNand = 0, currentDiv = 0;
 
         ReservationStation() {
                 // Prompt for number of each type of reservation station: LOAD, STORE, BNE, CALL/RET, ADD/ADDI, NAND, DIV must be > 0
