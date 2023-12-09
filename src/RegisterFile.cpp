@@ -8,4 +8,9 @@ struct RegisterFile {
                 val[0] = 0;
                 return val[index];
         }
+        RegisterFile() {
+                for (int i = 0; i < 8; i++) {
+                        val[i] = 0;
+                }
+        }
 };
