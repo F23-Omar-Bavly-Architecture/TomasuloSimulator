@@ -260,8 +260,67 @@ class Tomasulo {
                 }
             
             }else if (instruction.op == "NAND"){
+                if(reservationStation.currentNand < reservationStation.numNand){
+                    // check for available register
+                    //loop through Load reservation stations to find available one
+                    for(int i = 0; i < reservationStation.numNand; i++){
+                        currentStation = "Nand" + to_string(i);
+                        if(!reservationStation.station[currentStation].Busy){
+                            break;
+                        }
+                    }
+                    if(registerStatus.status[instruction.RS1] != ""){ // if not ready
+                        reservationStation.station[currentStation].Qj = registerStatus.status[instruction.RS1];
+                    }else{
+                        reservationStation.station[currentStation].Vj = registerFile[stoi(instruction.RS1)];
+                        reservationStation.station[currentStation].Qj = "";
+                    }
 
+                    if(registerStatus.status[instruction.RS2] != ""){ // if not ready
+                        reservationStation.station[currentStation].Qk = registerStatus.status[instruction.RS2];
+                    }else{
+                        reservationStation.station[currentStation].Vk = registerFile[stoi(instruction.RS2)];
+                        reservationStation.station[currentStation].Qk = "";
+                    }
+
+                    reservationStation.station[currentStation].Busy = true;
+                    registerStatus.status[instruction.RD] = currentStation;
+
+                    instructionQueue.pop();
+                    inflightInstructions.push_back(instruction);
+                    reservationStation.currentNand++;
+                }
             }else if (instruction.op == "DIV"){
+                if(reservationStation.currentDiv < reservationStation.numDiv){
+                    // check for available register
+                    //loop through Load reservation stations to find available one
+                    for(int i = 0; i < reservationStation.numDiv; i++){
+                        currentStation = "Div" + to_string(i);
+                        if(!reservationStation.station[currentStation].Busy){
+                            break;
+                        }
+                    }
+                    if(registerStatus.status[instruction.RS1] != ""){ // if not ready
+                        reservationStation.station[currentStation].Qj = registerStatus.status[instruction.RS1];
+                    }else{
+                        reservationStation.station[currentStation].Vj = registerFile[stoi(instruction.RS1)];
+                        reservationStation.station[currentStation].Qj = "";
+                    }
+
+                    if(registerStatus.status[instruction.RS2] != ""){ // if not ready
+                        reservationStation.station[currentStation].Qk = registerStatus.status[instruction.RS2];
+                    }else{
+                        reservationStation.station[currentStation].Vk = registerFile[stoi(instruction.RS2)];
+                        reservationStation.station[currentStation].Qk = "";
+                    }
+
+                    reservationStation.station[currentStation].Busy = true;
+                    registerStatus.status[instruction.RD] = currentStation;
+
+                    instructionQueue.pop();
+                    inflightInstructions.push_back(instruction);
+                    reservationStation.currentDiv++;
+                }
             
             }else{
                 cout << "Invalid instruction" << endl;
