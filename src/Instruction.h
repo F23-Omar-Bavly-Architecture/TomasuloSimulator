@@ -37,6 +37,7 @@ public:
         string RS2;
         Instruction(string Inst) {
                 this->Inst = Inst;
+                parse();
         }
         void parse()
         {
