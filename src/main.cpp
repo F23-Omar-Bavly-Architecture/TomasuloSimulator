@@ -1,7 +1,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-// RegisterSt : map<string, string> key is the name of the register 
+// RegisterStatus : map<string, string> key is the name of the register 
 // and value indicates whcih reservation station will provide the value for the register
 
 // ReservationStation : <string, ReservationStationEntry> key is the name of the reservation station
