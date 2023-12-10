@@ -4,8 +4,8 @@ using namespace std;
 class ReservationStationEntry {
 public:
         string Op;
-        string Vj;
-        string Vk;
+        int Vj;
+        int Vk;
         string Qj;
         string Qk;
         string A;
@@ -13,8 +13,8 @@ public:
         uint16_t Result;
         ReservationStationEntry() {
                 Op = "";
-                Vj = "";
-                Vk = "";
+                Vj = 0;
+                Vk = 0;
                 Qj = "";
                 Qk = "";
                 A = "";
