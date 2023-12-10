@@ -4,21 +4,24 @@ using namespace std;
 class ReservationStationEntry {
 public:
         string Op;
-        string Vj;
-        string Vk;
+        int Vj;
+        int Vk;
         string Qj;
         string Qk;
-        string A;
+        int A;
+        Instruction instruction;
         bool Busy;
+        int clockCycle;
         uint16_t Result;
         ReservationStationEntry() {
                 Op = "";
-                Vj = "";
-                Vk = "";
+                Vj = 0;
+                Vk = 0;
                 Qj = "";
                 Qk = "";
-                A = "";
+                A = 0;
                 Busy = false;
+                clockCycle = 0;
                 Result = 0;
         }
 };

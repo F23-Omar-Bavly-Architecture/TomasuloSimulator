@@ -52,7 +52,7 @@ class Tomasulo {
         queue<Instruction> writeBackQueue;
         array<int, 65536> Memory;
         RegisterFile registerFile;
-        queue<Instruction> LoadStoreQueue;
+        queue<int> LoadStoreQueue;
 
         uint16_t PC;
         int ClockCycle;
@@ -95,13 +95,15 @@ class Tomasulo {
                         reservationStation.station[currentStation].Qj = "";
                     }
 
-                    reservationStation.station[currentStation].A = instruction.offset;
+                    reservationStation.station[currentStation].A = (instruction.offset);
                     reservationStation.station[currentStation].Busy = true;
+                    reservationStation.station[currentStation].instruction = instruction;
+
                     registerStatus.status[instruction.RD] = currentStation;
 
                     instructionQueue.pop();
                     inflightInstructions.push_back(instruction);
-                    LoadStoreQueue.push(instruction);
+                    LoadStoreQueue.push(ClockCycle);
                     reservationStation.currentLoad++;
                     issuedQueue.push(instruction);
                 }
@@ -129,12 +131,13 @@ class Tomasulo {
                         reservationStation.station[currentStation].Qk = "";
                     }
 
-                    reservationStation.station[currentStation].A = instruction.offset;
+                    reservationStation.station[currentStation].A = (instruction.offset);
                     reservationStation.station[currentStation].Busy = true;
+                    reservationStation.station[currentStation].instruction = instruction;
 
                     instructionQueue.pop();
                     inflightInstructions.push_back(instruction);
-                    LoadStoreQueue.push(instruction);
+                    LoadStoreQueue.push(ClockCycle);
                     reservationStation.currentStore++;
                     issuedQueue.push(instruction);
                 }
@@ -162,8 +165,9 @@ class Tomasulo {
                         reservationStation.station[currentStation].Qk = "";
                     }
 
-                    reservationStation.station[currentStation].A = instruction.offset;
+                    reservationStation.station[currentStation].A = (instruction.offset);
                     reservationStation.station[currentStation].Busy = true;
+                    reservationStation.station[currentStation].instruction = instruction;
 
                     instructionQueue.pop();
                     inflightInstructions.push_back(instruction);
@@ -181,8 +185,10 @@ class Tomasulo {
                         }
                     }
 
-                    reservationStation.station[currentStation].A = instruction.label;
+                    reservationStation.station[currentStation].A = (instruction.label);
+
                     reservationStation.station[currentStation].Busy = true;
+                    reservationStation.station[currentStation].instruction = instruction;
 
                     instructionQueue.pop();
                     inflightInstructions.push_back(instruction);
@@ -203,6 +209,7 @@ class Tomasulo {
                     }
 
                     reservationStation.station[currentStation].Busy = true;
+                    reservationStation.station[currentStation].instruction = instruction;
 
                     instructionQueue.pop();
                     inflightInstructions.push_back(instruction);
@@ -236,6 +243,8 @@ class Tomasulo {
                     }
 
                     reservationStation.station[currentStation].Busy = true;
+                    reservationStation.station[currentStation].instruction = instruction;
+
                     registerStatus.status[instruction.RD] = currentStation;
 
                     instructionQueue.pop();
@@ -262,6 +271,7 @@ class Tomasulo {
 
                     reservationStation.station[currentStation].Vk = instruction.IMM;
                     reservationStation.station[currentStation].Qk = "";
+                    reservationStation.station[currentStation].instruction = instruction;
 
                     reservationStation.station[currentStation].Busy = true;
                     registerStatus.status[instruction.RD] = currentStation;
@@ -298,6 +308,7 @@ class Tomasulo {
 
                     reservationStation.station[currentStation].Busy = true;
                     registerStatus.status[instruction.RD] = currentStation;
+                    reservationStation.station[currentStation].instruction = instruction;
 
                     instructionQueue.pop();
                     inflightInstructions.push_back(instruction);
@@ -329,6 +340,7 @@ class Tomasulo {
                     }
 
                     reservationStation.station[currentStation].Busy = true;
+                    reservationStation.station[currentStation].instruction = instruction;
                     registerStatus.status[instruction.RD] = currentStation;
 
                     instructionQueue.pop();
@@ -343,10 +355,20 @@ class Tomasulo {
 
         };
         void Execute(){
-            // For each instruction in issued queue try to execute
-            queue<Instruction> tempQueue = issuedQueue;
-            while(!tempQueue.empty()){
-                
+            // iterate over all busy reservation stations
+            auto it = reservationStation.station.begin();
+            while(it != reservationStation.station.end()){
+                if(it->second.Busy){
+                    if(it->second.Op == "LOAD"){
+                        if(it->second.Qj == "" && it->second.clockCycle == LoadStoreQueue.front()){
+                            it->second.Result = Memory[it->second.Vj + (it->second.A)];
+                            executingQueue.push(inflightInstructions.front());
+                            inflightInstructions.erase(inflightInstructions.begin());
+                            it->second.Busy = false;
+                            reservationStation.currentLoad--;
+                            reservationStation.cyclesLoad++;
+                        }
+                }
             }
         };
         void WriteBack();

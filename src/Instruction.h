@@ -29,9 +29,9 @@ class Instruction {
 public:
         string Inst;
         string op;
-        string IMM;
-        string label;
-        string offset;
+        int IMM;
+        int label;
+        int offset;
         string RD;
         string RS1;
         string RS2;
