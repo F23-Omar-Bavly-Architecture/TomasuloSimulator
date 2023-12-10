@@ -47,8 +47,13 @@ class Tomasulo {
         ReservationStation reservationStation;
         queue<Instruction> instructionQueue;
         vector<Instruction> inflightInstructions;
+        queue<Instruction> issuedQueue;
+        queue<Instruction> executingQueue;
+        queue<Instruction> writeBackQueue;
         array<int, 65536> Memory;
         RegisterFile registerFile;
+        queue<Instruction> LoadStoreQueue;
+
         uint16_t PC;
         int ClockCycle;
 
@@ -96,7 +101,9 @@ class Tomasulo {
 
                     instructionQueue.pop();
                     inflightInstructions.push_back(instruction);
+                    LoadStoreQueue.push(instruction);
                     reservationStation.currentLoad++;
+                    issuedQueue.push(instruction);
                 }
             }else if (instruction.op == "STORE"){
                 if(reservationStation.currentStore < reservationStation.numStore){
@@ -127,7 +134,9 @@ class Tomasulo {
 
                     instructionQueue.pop();
                     inflightInstructions.push_back(instruction);
+                    LoadStoreQueue.push(instruction);
                     reservationStation.currentStore++;
+                    issuedQueue.push(instruction);
                 }
             }else if (instruction.op == "BNE"){
                 if(reservationStation.currentBne < reservationStation.numBne){
@@ -159,6 +168,7 @@ class Tomasulo {
                     instructionQueue.pop();
                     inflightInstructions.push_back(instruction);
                     reservationStation.currentBne++;
+                    issuedQueue.push(instruction);
                 }
             }else if (instruction.op == "CALL"){
                 if(reservationStation.currentCallRet < reservationStation.numCallRet){
@@ -178,6 +188,7 @@ class Tomasulo {
                     inflightInstructions.push_back(instruction);
                     reservationStation.currentCallRet++;
                     CallRetInFlight = true;
+                    issuedQueue.push(instruction);
 
                 }
             }else if (instruction.op == "RET"){
@@ -197,6 +208,7 @@ class Tomasulo {
                     inflightInstructions.push_back(instruction);
                     reservationStation.currentCallRet++;
                     CallRetInFlight = true;
+                    issuedQueue.push(instruction);
 
                 }
             }else if (instruction.op == "ADD"){
@@ -229,6 +241,7 @@ class Tomasulo {
                     instructionQueue.pop();
                     inflightInstructions.push_back(instruction);
                     reservationStation.currentAdd++;
+                    issuedQueue.push(instruction);
                 }
             }else if (instruction.op == "ADDI"){
                 if(reservationStation.currentAdd < reservationStation.numAdd){
@@ -256,6 +269,7 @@ class Tomasulo {
                     instructionQueue.pop();
                     inflightInstructions.push_back(instruction);
                     reservationStation.currentAdd++;
+                    issuedQueue.push(instruction);
                 }
             
             }else if (instruction.op == "NAND"){
@@ -288,6 +302,7 @@ class Tomasulo {
                     instructionQueue.pop();
                     inflightInstructions.push_back(instruction);
                     reservationStation.currentNand++;
+                    issuedQueue.push(instruction);
                 }
             }else if (instruction.op == "DIV"){
                 if(reservationStation.currentDiv < reservationStation.numDiv){
@@ -319,6 +334,7 @@ class Tomasulo {
                     instructionQueue.pop();
                     inflightInstructions.push_back(instruction);
                     reservationStation.currentDiv++;
+                    issuedQueue.push(instruction);
                 }
             
             }else{
@@ -326,7 +342,13 @@ class Tomasulo {
             }
 
         };
-        void Execute();
+        void Execute(){
+            // For each instruction in issued queue try to execute
+            queue<Instruction> tempQueue = issuedQueue;
+            while(!tempQueue.empty()){
+                
+            }
+        };
         void WriteBack();
 };
 
