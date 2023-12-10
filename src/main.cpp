@@ -83,7 +83,6 @@ class Tomasulo {
                             break;
                         }
                     }
-                    currentStation = "Load" + to_string(reservationStation.currentLoad);
                     if(registerStatus.status[instruction.RS1] != ""){ // if not ready
                         reservationStation.station[currentStation].Qj = registerStatus.status[instruction.RS1];
                     }else{
