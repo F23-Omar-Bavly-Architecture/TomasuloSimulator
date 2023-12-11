@@ -12,6 +12,7 @@ public:
         int A;
         bool Busy;
         int clockCycle;
+        int PCStart;
         int finishesExecutionInCycle;
         uint16_t Result;
         ReservationStationEntry() {
@@ -24,6 +25,7 @@ public:
                 A = 0;
                 Busy = false;
                 clockCycle = 0;
+                PCStart = 0;
                 finishesExecutionInCycle = 0;
                 Result = 0;
         }
