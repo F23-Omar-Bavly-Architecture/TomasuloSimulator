@@ -72,6 +72,22 @@ class Tomasulo {
             ClockCycle = 0;
             RetInFlight = false;
             // populate instruction queue either with use input or from file
+            string input;
+            cout << "Would you like to enter instructions manually? (y/n): ";
+            cin >> input;
+            while(input != "y" && input != "n"){
+                cout << "Invalid input" << endl;
+                cout << "Would you like to enter instructions manually? (y/n): ";
+                cin >> input;
+            }
+            if(input == "y"){
+                ReadInstructionsFromUser();
+            }else{
+                string filename;
+                cout << "Please enter filename: ";
+                cin >> filename;
+                ReadInstructionsFromFile(filename);
+            }
             // prompt for starting address if file is used
             cout << "Please enter starting address: ";
             cin >> startingAddress;
@@ -81,7 +97,12 @@ class Tomasulo {
                 pleaseFree[it->first] = false;
             }
         }
-        void RunClockCycle();
+        void RunClockCycle(){
+            WriteBack();
+            Execute();
+            Issue();
+            ClockCycle++;
+        };
         void Issue(){
             // Read instruction from instruction queue
             // Check type of instruction
@@ -636,6 +657,36 @@ class Tomasulo {
         }
 
     }
+
+        void ReadInstructionsFromFile(string filename){
+            // output error and prompt user to enter filename again if file does not exist
+            // read instructions from file and populate instruction queue
+            ifstream file(filename);
+            while(!file.is_open()){
+                cout << "File does not exist" << endl;
+                cout << "Please enter filename: ";
+                cin >> filename;
+                file.open(filename);
+            }
+            string line;
+            while(getline(file, line)){
+                instructionQueue.push_back(Instruction(line));
+            }
+            file.close();
+            
+        }
+        void ReadInstructionsFromUser(){
+            // prompt user to enter instructions
+            // populate instruction queue
+            string input;
+            cout << "Please enter instructions (enter done to stop): " << endl;
+            while(input != "done"){
+                getline(cin, input);
+                if(input != "done"){
+                    instructionQueue.push_back(Instruction(input));
+                }
+            }
+        }
 };
 
 int main(){
