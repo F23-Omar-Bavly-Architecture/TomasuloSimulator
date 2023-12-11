@@ -543,7 +543,7 @@ class Tomasulo {
         {
             if(pq.top().Result)
             {
-                PC = pq.top().A+pq.top().PCstart;
+                PC = pq.top().A + pq.top().PCStart;
                 reservationStation.station[pq.top().stationName].Busy = false;
                 reservationStation.currentBne--;
                 for(auto it = reservationStation.station.begin(); it !=  reservationStation.station.end(); it++)
