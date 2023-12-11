@@ -138,6 +138,13 @@ class Tomasulo {
                     reservationStation.station[it->first].Result = 0;
                     reservationStation.station[it->first].executed = false;
                     it->second = false;
+                    if(it->first[0] == 'C' || it->first[0] == 'R') reservationStation.currentCallRet--;
+                    else if(it->first[0] == 'A') reservationStation.currentAdd--;
+                    else if(it->first[0] == 'L') reservationStation.currentLoad--;
+                    else if(it->first[0] == 'D') reservationStation.currentDiv--;
+                    else if(it->first[0] == 'N') reservationStation.currentNand--;
+                    else if(it->first[0] == 'S') reservationStation.currentStore--;
+                    else if(it->first[0] == 'B') reservationStation.currentBne--;
                 }
                 }
                 return;
@@ -159,6 +166,13 @@ class Tomasulo {
                     reservationStation.station[it->first].Result = 0;
                     reservationStation.station[it->first].executed = false;
                     it->second = false;
+                    if(it->first[0] == 'C' || it->first[0] == 'R') reservationStation.currentCallRet--;
+                    else if(it->first[0] == 'A') reservationStation.currentAdd--;
+                    else if(it->first[0] == 'L') reservationStation.currentLoad--;
+                    else if(it->first[0] == 'D') reservationStation.currentDiv--;
+                    else if(it->first[0] == 'N') reservationStation.currentNand--;
+                    else if(it->first[0] == 'S') reservationStation.currentStore--;
+                    else if(it->first[0] == 'B') reservationStation.currentBne--;
                 }
                 }
                 return;
@@ -551,6 +565,13 @@ class Tomasulo {
                     reservationStation.station[it->first].Result = 0;
                     reservationStation.station[it->first].executed = false;
                     it->second = false;
+                    if(it->first[0] == 'C' || it->first[0] == 'R') reservationStation.currentCallRet--;
+                    else if(it->first[0] == 'A') reservationStation.currentAdd--;
+                    else if(it->first[0] == 'L') reservationStation.currentLoad--;
+                    else if(it->first[0] == 'D') reservationStation.currentDiv--;
+                    else if(it->first[0] == 'N') reservationStation.currentNand--;
+                    else if(it->first[0] == 'S') reservationStation.currentStore--;
+                    else if(it->first[0] == 'B') reservationStation.currentBne--;
                 }
             }
 
@@ -708,22 +729,22 @@ class Tomasulo {
                 }
                 if(pq.top().stationName[0] == 'A')
                 {
-                    reservationStation.currentAdd--;
+                    //reservationStation.currentAdd--;
                     pleaseFree[pq.top().stationName] = true;
                 }
                 else if(pq.top().stationName[0] == 'L')
                 {
-                    reservationStation.currentLoad--;
+                    //reservationStation.currentLoad--;
                     pleaseFree[pq.top().stationName] = true;
                 }
                 else if(pq.top().stationName[0] == 'D')
                 {
-                    reservationStation.currentDiv--;
+                    //reservationStation.currentDiv--;
                     pleaseFree[pq.top().stationName] = true;
                 }
                 else if(pq.top().stationName[0] == 'N')
                 {
-                    reservationStation.currentNand--;
+                    //reservationStation.currentNand--;
                     pleaseFree[pq.top().stationName] = true;
                 }
             }
@@ -733,7 +754,7 @@ class Tomasulo {
             if(pq.top().Qk == "")
             { 
             Memory[pq.top().A] = pq.top().Vk;
-            reservationStation.currentStore--;
+            //reservationStation.currentStore--;
             pleaseFree[pq.top().stationName] = true;
             instructionStatus[pq.top().clockCycle].push_back(to_string(ClockCycle));
             }
@@ -747,7 +768,7 @@ class Tomasulo {
             {
                 // flush all instructions after the branch
                 PC = pq.top().A + pq.top().PCStart;
-                reservationStation.currentBne--;
+                //reservationStation.currentBne--;
                 instructionStatus[pq.top().clockCycle].push_back(to_string(ClockCycle));
                 pleaseFree[pq.top().stationName] = true;
 
@@ -778,7 +799,7 @@ class Tomasulo {
         else if(pq.top().stationName[0] == 'C' && pq.top().finishesExecutionInCycle < ClockCycle)
         {
             registerFile[1] = pq.top().Result;
-            reservationStation.currentCallRet--;
+            //reservationStation.currentCallRet--;
             pleaseFree[pq.top().stationName] = true;
             instructionStatus[pq.top().clockCycle].push_back(to_string(ClockCycle));
         }
@@ -788,7 +809,7 @@ class Tomasulo {
             {
             RetInFlight = false;
             PC = registerFile[1];
-            reservationStation.currentCallRet--;
+            //reservationStation.currentCallRet--;
             pleaseFree[pq.top().stationName] = true;
             instructionStatus[pq.top().clockCycle].push_back(to_string(ClockCycle));
             }
