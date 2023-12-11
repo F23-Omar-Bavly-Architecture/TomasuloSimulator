@@ -54,6 +54,9 @@ class Tomasulo {
         RegisterFile registerFile;
         queue<int> LoadStoreQueue;
         map<string, bool> pleaseFree;
+        queue<int> predicting;
+        bool RetInFlight;
+
 
         uint16_t PC;
         int ClockCycle;
@@ -63,11 +66,11 @@ class Tomasulo {
             return instructionQueue.empty() && inflightInstructions.empty();
         }
 
-        bool RetInFlight = false;
 
         Tomasulo() {
             PC = 0;
             ClockCycle = 0;
+            RetInFlight = false;
             // populate instruction queue either with use input or from file
             // prompt for starting address if file is used
             cout << "Please enter starting address: ";
@@ -122,6 +125,9 @@ class Tomasulo {
                     LoadStoreQueue.push(ClockCycle);
                     reservationStation.currentLoad++;
                     issuedQueue.push(instruction);
+
+                    //if(predicting.front()) reservationStation.station[currentStation].isPredicted = true;
+                    PC++;
                 }
             }else if (instruction.op == "STORE"){
                 if(reservationStation.currentStore < reservationStation.numStore){
@@ -158,6 +164,9 @@ class Tomasulo {
                     LoadStoreQueue.push(ClockCycle);
                     reservationStation.currentStore++;
                     issuedQueue.push(instruction);
+
+                    //if(predicting) reservationStation.station[currentStation].isPredicted = true;
+                    PC++;
                 }
             }else if (instruction.op == "BNE"){
                 if(reservationStation.currentBne < reservationStation.numBne){
@@ -193,31 +202,43 @@ class Tomasulo {
                     inflightInstructions.push_back(instruction);
                     reservationStation.currentBne++;
                     issuedQueue.push(instruction);
+
+                    //if(predicting) reservationStation.station[currentStation].isPredicted = true;
+
+                    //predicting = true;
+                    predicting.push(ClockCycle);
+                    PC++;
                 }
             }else if (instruction.op == "CALL"){
                 if(reservationStation.currentCallRet < reservationStation.numCallRet){
                     // check for available register
                     //loop through Load reservation stations to find available one
-                    for(int i = 0; i < reservationStation.numCallRet; i++){
-                        currentStation = "CallRet" + to_string(i);
-                        if(!reservationStation.station[currentStation].Busy){
-                            break;
+                    if(predicting.empty() || predicting.front() > ClockCycle){
+                        
+                        for(int i = 0; i < reservationStation.numCallRet; i++){
+                            currentStation = "CallRet" + to_string(i);
+                            if(!reservationStation.station[currentStation].Busy){
+                                break;
+                            }
                         }
+
+                        reservationStation.station[currentStation].A = (instruction.label);
+                        registerStatus.status["R1"] = currentStation;
+                        reservationStation.station[currentStation].Busy = true;
+                        //reservationStation.station[currentStation].instruction = instruction;
+
+                        reservationStation.station[currentStation].PCStart = PC;
+                        reservationStation.station[currentStation].clockCycle = ClockCycle;
+
+                        //if(predicting) reservationStation.station[currentStation].isPredicted = true;
+                        PC = instruction.label - startingAddress;
+
+                        inflightInstructions.push_back(instruction);
+                        reservationStation.currentCallRet++;
+                        issuedQueue.push(instruction);
+
+                    PC++;
                     }
-
-                    reservationStation.station[currentStation].A = (instruction.label);
-                    registerStatus.status["R1"] = currentStation;
-                    reservationStation.station[currentStation].Busy = true;
-                    //reservationStation.station[currentStation].instruction = instruction;
-
-                    reservationStation.station[currentStation].PCStart = PC;
-                    reservationStation.station[currentStation].clockCycle = ClockCycle;
-
-                    PC = instruction.label - startingAddress;
-
-                    inflightInstructions.push_back(instruction);
-                    reservationStation.currentCallRet++;
-                    issuedQueue.push(instruction);
 
                 }
             }else if (instruction.op == "RET"){
@@ -242,6 +263,8 @@ class Tomasulo {
                     RetInFlight = true;
                     issuedQueue.push(instruction);
 
+                    //if(predicting) reservationStation.station[currentStation].isPredicted = true;
+                    PC++;
                 }
             }else if (instruction.op == "ADD"){
                 if(reservationStation.currentAdd < reservationStation.numAdd){
@@ -278,6 +301,9 @@ class Tomasulo {
                     inflightInstructions.push_back(instruction);
                     reservationStation.currentAdd++;
                     issuedQueue.push(instruction);
+
+                    //if(predicting) reservationStation.station[currentStation].isPredicted = true;
+                    PC++;
                 }
             }else if (instruction.op == "ADDI"){
                 if(reservationStation.currentAdd < reservationStation.numAdd){
@@ -309,6 +335,9 @@ class Tomasulo {
                     inflightInstructions.push_back(instruction);
                     reservationStation.currentAdd++;
                     issuedQueue.push(instruction);
+
+                    //if(predicting) reservationStation.station[currentStation].isPredicted = true;
+                    PC++;
                 }
             
             }else if (instruction.op == "NAND"){
@@ -345,6 +374,9 @@ class Tomasulo {
                     inflightInstructions.push_back(instruction);
                     reservationStation.currentNand++;
                     issuedQueue.push(instruction);
+
+                    //if(predicting) reservationStation.station[currentStation].isPredicted = true;
+                    PC++;
                 }
             }else if (instruction.op == "DIV"){
                 if(reservationStation.currentDiv < reservationStation.numDiv){
@@ -381,6 +413,9 @@ class Tomasulo {
                     inflightInstructions.push_back(instruction);
                     reservationStation.currentDiv++;
                     issuedQueue.push(instruction);
+
+                    //if(predicting) reservationStation.station[currentStation].isPredicted = true;
+                    PC++;
                 }
             
             }else{
@@ -396,7 +431,7 @@ class Tomasulo {
             auto it = reservationStation.station.begin();
             bool popLoadStore = false;
             while(it != reservationStation.station.end()){
-                if(it->second.Busy && !it->second.executed){
+                if(it->second.Busy && !it->second.executed && ((predicting.empty()) || !(predicting.front() < it->second.clockCycle))){
                     if(it->second.Op == "LOAD"){
                         if(it->second.Qj == "" && it->second.clockCycle == LoadStoreQueue.front()){
                             it->second.Result = Memory[it->second.Vj + (it->second.A)];
@@ -543,10 +578,14 @@ class Tomasulo {
             pleaseFree[pq.top().stationName] = true;
             }
         }
-        else if(pq.top().stationName[0] == 'B' && pq.top().finishesExecutionInCycle < ClockCycle)
+        else if(pq.top().stationName[0] == 'B' && pq.top().finishesExecutionInCycle < ClockCycle) 
         {
-            if(pq.top().Result)
+            //predicting = false;
+            // remove this inst from the prediction queue
+            predicting.pop();
+            if(pq.top().Result) // taken logic
             {
+                // flush all instructions after the branch
                 PC = pq.top().A + pq.top().PCStart;
                 reservationStation.station[pq.top().stationName].Busy = false;
                 reservationStation.currentBne--;
@@ -554,6 +593,12 @@ class Tomasulo {
                 {
                     if(it->second.clockCycle > pq.top().clockCycle)
                     {
+                        // if the instruction is a branch remove it from the branch queue
+                        if(it->second.stationName[0] == 'B')
+                        {
+                            // remove this inst from the prediction queue
+                            predicting.pop();
+                        }
                         it->second.Op = "";
                         it->second.Vj = 0;
                         it->second.Vk = 0;
@@ -566,8 +611,6 @@ class Tomasulo {
                         it->second.Result = 0;
                     }
                 }
-
-                
             }
         }
         else if(pq.top().stationName[0] == 'C' && pq.top().finishesExecutionInCycle < ClockCycle)

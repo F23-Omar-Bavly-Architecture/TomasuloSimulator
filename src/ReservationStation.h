@@ -16,6 +16,7 @@ public:
         int finishesExecutionInCycle;
         uint16_t Result;
         bool executed;
+        bool isPredicted;
         ReservationStationEntry() {
                 stationName = "";
                 Op = "";
@@ -30,6 +31,7 @@ public:
                 finishesExecutionInCycle = 0;
                 Result = 0;
                 executed = false;
+                isPredicated = false;
         }
 };
 
