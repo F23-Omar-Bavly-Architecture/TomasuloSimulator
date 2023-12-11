@@ -93,6 +93,7 @@ class Tomasulo {
             cout << "Please enter starting address: ";
             cin >> startingAddress;
             // prompt for data to initialize memory
+            initializeMem();
             for(auto it = reservationStation.station.begin(); it !=  reservationStation.station.end(); it++)
             {
                 pleaseFree[it->first] = false;
@@ -788,19 +789,23 @@ class Tomasulo {
 int main(){
 
     Tomasulo tomasulo;
-    vector<Instruction> instructionQueue;
-    tomasulo.initializeMem();
+    //vector<Instruction> instructionQueue;
+    //tomasulo.initializeMem();
 
-    instructionQueue.push_back(Instruction("LOAD R1, 0(R0)"));
-    instructionQueue.push_back(Instruction("LOAD R2, 1(R0)"));
-    instructionQueue.push_back(Instruction("ADD R3, R1, R2"));
-    instructionQueue.push_back(Instruction("STORE R3, 2(R0)"));
-    tomasulo.instructionQueue = instructionQueue;
+    // instructionQueue.push_back(Instruction("LOAD R1, 0(R0)"));
+    // instructionQueue.push_back(Instruction("LOAD R2, 1(R0)"));
+    // instructionQueue.push_back(Instruction("ADD R3, R1, R2"));
+    // instructionQueue.push_back(Instruction("STORE R3, 2(R0)"));
+    // tomasulo.instructionQueue = instructionQueue;
 
     while(!tomasulo.isFinished()){
         tomasulo.RunClockCycle();
     }
     tomasulo.printTable();
+    cout << "Memory: " << tomasulo.Memory[2] << endl;
+    cout << "R1: " << tomasulo.registerFile[1] << endl;
+    cout << "R2: " << tomasulo.registerFile[2] << endl;
+    cout << "R3: " << tomasulo.registerFile[3] << endl;
     return 0;
     
 
