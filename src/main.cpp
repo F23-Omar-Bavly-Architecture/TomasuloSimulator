@@ -423,7 +423,6 @@ class Tomasulo {
                     }
                 }
                 reservationStation.station[pq.top().stationName].Busy = false;
-                pq.pop();
             }
         }
         else
@@ -432,18 +431,16 @@ class Tomasulo {
             {
                 Memory[pq.top().A] = pq.top().Result;
                 reservationStation.station[pq.top().stationName].Busy = false;
-                pq.pop();
             }
             else if(pq.top().stationName[0] == 'B')
             {
                 if(pq.top().finishesExecutionInCycle > ClockCycle)
                 {
-                    if(pq.top().Vj != pq.top().Vk)
+                    if(pq.top().Result)
                     {
                         PC = pq.top().A+pq.top().clockCycle;
                     }
                     reservationStation.station[pq.top().stationName].Busy = false;
-                    pq.pop();
                 }
             }
 
