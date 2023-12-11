@@ -434,6 +434,18 @@ class Tomasulo {
                 reservationStation.station[pq.top().stationName].Busy = false;
                 pq.pop();
             }
+            else if(pq.top().stationName[0] == 'B')
+            {
+                if(pq.top().finishesExecutionInCycle > ClockCycle)
+                {
+                    if(pq.top().Vj != pq.top().Vk)
+                    {
+                        PC = pq.top().A+pq.top().clockCycle;
+                    }
+                    reservationStation.station[pq.top().stationName].Busy = false;
+                    pq.pop();
+                }
+            }
 
         }
 
