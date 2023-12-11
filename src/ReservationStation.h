@@ -42,6 +42,7 @@ public:
 
         ReservationStation() {
                 // Prompt for number of each type of reservation station: LOAD, STORE, BNE, CALL/RET, ADD/ADDI, NAND, DIV must be > 0
+                cout << "Enter number of each type of reservation station, must be greater than 0\n";
                 cout << "Enter number of LOAD reservation stations: ";
                 cin >> numLoad;
                 while(numLoad <= 0) {
@@ -121,6 +122,8 @@ public:
                 }
 
                 // prompt user for the number of cycles required by each FU, must be > 0
+                cout << "\n\n-----------------------------------------------\n\n";
+                cout << "Enter number of cycles required by each FU, must be greater than 0\n";
                 cout << "Enter number of cycles required by LOAD FU: ";
                 cin >> cyclesLoad;
                 while(cyclesLoad <= 0) {

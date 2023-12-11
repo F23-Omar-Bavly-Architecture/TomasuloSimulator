@@ -85,23 +85,24 @@ class Tomasulo {
             RetInFlight = false;
             // populate instruction queue either with use input or from file
             string input;
-            cout << "Would you like to enter instructions manually? (y/n): ";
+            cout << "Would you like to enter instructions manually (choosing no will require you provide a file)? (y/n): ";
             cin >> input;
             while(input != "y" && input != "n"){
                 cout << "Invalid input" << endl;
-                cout << "Would you like to enter instructions manually? (y/n): ";
+                cout << "Would you like to enter instructions manually (choosing no will require you provide a file)? (y/n): ";
                 cin >> input;
             }
             if(input == "y"){
                 ReadInstructionsFromUser();
             }else{
                 string filename;
-                cout << "Please enter filename: ";
+                cout << "Please enter file path relative to this file: ";
                 cin >> filename;
                 ReadInstructionsFromFile(filename);
             }
             // prompt for starting address if file is used
-            cout << "Please enter starting address: ";
+            cout << "\n\n----------------------------------------------------------------------------------------\n\n";
+            cout << "Please enter starting address(will be used during CALL): ";
             cin >> startingAddress;
             // prompt for data to initialize memory
             initializeMem();
@@ -825,6 +826,9 @@ class Tomasulo {
     }
         void initializeMem()
         {
+            cout << "\n\n----------------------------------------------------------------------------------------\n\n";
+            cout << "Enter values for memory" << endl;
+            cout << "Enter -1 to stop entering values" << endl << endl;
             int address = 0;
             while(address != -1)
             {
@@ -841,7 +845,9 @@ class Tomasulo {
                     cout << "Enter value: ";
                     cin >> Memory[address];
                 }
+                cout << endl;
             }
+            cout << "\n\n----------------------------------------------------------------------------------------\n\n";
         }
     
 
