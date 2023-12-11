@@ -64,7 +64,7 @@ class Tomasulo {
         int startingAddress;
 
         bool isFinished(){
-            return instructionQueue.empty() && inflightInstructions.empty();
+            return PC == instructionQueue.size();
         }
 
 
