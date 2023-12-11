@@ -140,6 +140,7 @@ class Tomasulo {
 
                     reservationStation.station[currentStation].PCStart = PC;
                     reservationStation.station[currentStation].clockCycle = ClockCycle;
+                    reservationStation.station[currentStation].Op = instruction.op;
 
                     
                     //reservationStation.station[currentStation].instruction = instruction;
@@ -186,6 +187,7 @@ class Tomasulo {
 
                     reservationStation.station[currentStation].PCStart = PC;
                     reservationStation.station[currentStation].clockCycle = ClockCycle;
+                    reservationStation.station[currentStation].Op = instruction.op;
 
                     inflightInstructions.push_back(instruction);
                     LoadStoreQueue.push(ClockCycle);
@@ -228,6 +230,7 @@ class Tomasulo {
 
                     reservationStation.station[currentStation].PCStart = PC;
                     reservationStation.station[currentStation].clockCycle = ClockCycle;
+                    reservationStation.station[currentStation].Op = instruction.op;
 
                     inflightInstructions.push_back(instruction);
                     reservationStation.currentBne++;
@@ -267,6 +270,7 @@ class Tomasulo {
 
                         reservationStation.station[currentStation].PCStart = PC;
                         reservationStation.station[currentStation].clockCycle = ClockCycle;
+                        reservationStation.station[currentStation].Op = instruction.op;
 
                         //if(predicting) reservationStation.station[currentStation].isPredicted = true;
                         PC = instruction.label - startingAddress;
@@ -297,6 +301,7 @@ class Tomasulo {
 
                     reservationStation.station[currentStation].PCStart = PC;
                     reservationStation.station[currentStation].clockCycle = ClockCycle;
+                    reservationStation.station[currentStation].Op = instruction.op;
 
                     inflightInstructions.push_back(instruction);
                     reservationStation.currentCallRet++;
@@ -338,6 +343,7 @@ class Tomasulo {
 
                     reservationStation.station[currentStation].PCStart = PC;
                     reservationStation.station[currentStation].clockCycle = ClockCycle;
+                    reservationStation.station[currentStation].Op = instruction.op;
 
                     registerStatus.status[instruction.RD] = currentStation;
 
@@ -374,6 +380,7 @@ class Tomasulo {
 
                     reservationStation.station[currentStation].PCStart = PC;
                     reservationStation.station[currentStation].clockCycle = ClockCycle;
+                    reservationStation.station[currentStation].Op = instruction.op;
 
                     reservationStation.station[currentStation].Busy = true;
                     registerStatus.status[instruction.RD] = currentStation;
@@ -420,6 +427,7 @@ class Tomasulo {
 
                     reservationStation.station[currentStation].PCStart = PC;
                     reservationStation.station[currentStation].clockCycle = ClockCycle;
+                    reservationStation.station[currentStation].Op = instruction.op;
 
                     inflightInstructions.push_back(instruction);
                     reservationStation.currentNand++;
@@ -461,6 +469,7 @@ class Tomasulo {
 
                     reservationStation.station[currentStation].PCStart = PC;
                     reservationStation.station[currentStation].clockCycle = ClockCycle;
+                    reservationStation.station[currentStation].Op = instruction.op;
 
                     registerStatus.status[instruction.RD] = currentStation;
 
@@ -602,9 +611,13 @@ class Tomasulo {
         {
             pq.push(it->second);
         }
-        while(!pq.top().Busy)
+        while(!pq.empty() && !pq.top().Busy)
         {
             pq.pop();
+        }
+        if(pq.empty())
+        {
+            return;
         }
         // pop the top of the heap and check if it is ready to write back
         if(pq.top().stationName[0] == 'A'||pq.top().stationName[0] == 'L'||pq.top().stationName[0] == 'D'||pq.top().stationName[0] == 'N')
@@ -721,6 +734,7 @@ class Tomasulo {
         }
         else
         {
+            cout << "Invalid instruction " << pq.top().stationName << " " << pq.top().Op << endl;
             pq.pop();
         }
 
