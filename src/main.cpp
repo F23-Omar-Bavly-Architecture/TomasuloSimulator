@@ -775,6 +775,14 @@ class Tomasulo {
                 }
             }
         }
+        void printTable()
+        {
+             cout << "Cycle \t" << "Instruction \t" <<"Issue \t" <<"Start EX \t"<<"End EX\t"<<"WB\t" <<endl;
+            for(auto it = instructionStatus.begin(); it != instructionStatus.end(); it++)
+            {
+               cout << it->first << "\t" << it->second[0] << "\t" << it->second[1] << "\t" << it->second[2] << "\t" << it->second[3] << "\t" << it->second[4] << endl;
+            }
+        }
 };
 
 int main(){
@@ -783,18 +791,16 @@ int main(){
     vector<Instruction> instructionQueue;
     tomasulo.initializeMem();
 
-    instructionQueue.push_back(Instruction("ADD, R1, R2, R3"));
-    instructionQueue.push_back(Instruction("BNE R1, R2, 12"));
-    instructionQueue.push_back(Instruction("NAND R1, R1, R2"));
-    instructionQueue.push_back(Instruction("DIV R1, R1, R2"));
-
+    instructionQueue.push_back(Instruction("LOAD R1, 0(R0)"));
+    instructionQueue.push_back(Instruction("LOAD R2, 1(R0)"));
+    instructionQueue.push_back(Instruction("ADD R3, R1, R2"));
+    instructionQueue.push_back(Instruction("STORE R3, 2(R0)"));
     tomasulo.instructionQueue = instructionQueue;
-    tomasulo.Issue();
-    tomasulo.PC++;
-    tomasulo.ClockCycle++;
-    tomasulo.Issue();
-    tomasulo.Issue();
-    tomasulo.Issue();
+
+    while(!tomasulo.isFinished()){
+        tomasulo.RunClockCycle();
+    }
+    tomasulo.printTable();
     return 0;
     
 
