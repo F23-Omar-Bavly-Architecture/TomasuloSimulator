@@ -45,7 +45,7 @@ class Tomasulo {
     public:
         RegisterStatus registerStatus;
         ReservationStation reservationStation;
-        queue<Instruction> instructionQueue;
+        vector<Instruction> instructionQueue;
         vector<Instruction> inflightInstructions;
         queue<Instruction> issuedQueue;
         queue<Instruction> executingQueue;
@@ -75,7 +75,7 @@ class Tomasulo {
             // Read instruction from instruction queue
             // Check type of instruction
             // Check for unused reservation station of that type
-            Instruction instruction = instructionQueue.front();
+            Instruction instruction = instructionQueue[PC];
             string currentStation;
             if (instruction.op == "LOAD"){
                 // check for available load reservation station
@@ -101,7 +101,6 @@ class Tomasulo {
 
                     registerStatus.status[instruction.RD] = currentStation;
 
-                    instructionQueue.pop();
                     inflightInstructions.push_back(instruction);
                     LoadStoreQueue.push(ClockCycle);
                     reservationStation.currentLoad++;
@@ -135,7 +134,6 @@ class Tomasulo {
                     reservationStation.station[currentStation].Busy = true;
                     //reservationStation.station[currentStation].instruction = instruction;
 
-                    instructionQueue.pop();
                     inflightInstructions.push_back(instruction);
                     LoadStoreQueue.push(ClockCycle);
                     reservationStation.currentStore++;
@@ -169,7 +167,6 @@ class Tomasulo {
                     reservationStation.station[currentStation].Busy = true;
                     //reservationStation.station[currentStation].instruction = instruction;
 
-                    instructionQueue.pop();
                     inflightInstructions.push_back(instruction);
                     reservationStation.currentBne++;
                     issuedQueue.push(instruction);
@@ -190,7 +187,6 @@ class Tomasulo {
                     reservationStation.station[currentStation].Busy = true;
                     //reservationStation.station[currentStation].instruction = instruction;
 
-                    instructionQueue.pop();
                     inflightInstructions.push_back(instruction);
                     reservationStation.currentCallRet++;
                     CallRetInFlight = true;
@@ -211,7 +207,6 @@ class Tomasulo {
                     reservationStation.station[currentStation].Busy = true;
                     //reservationStation.station[currentStation].instruction = instruction;
 
-                    instructionQueue.pop();
                     inflightInstructions.push_back(instruction);
                     reservationStation.currentCallRet++;
                     CallRetInFlight = true;
@@ -247,7 +242,6 @@ class Tomasulo {
 
                     registerStatus.status[instruction.RD] = currentStation;
 
-                    instructionQueue.pop();
                     inflightInstructions.push_back(instruction);
                     reservationStation.currentAdd++;
                     issuedQueue.push(instruction);
@@ -276,7 +270,6 @@ class Tomasulo {
                     reservationStation.station[currentStation].Busy = true;
                     registerStatus.status[instruction.RD] = currentStation;
 
-                    instructionQueue.pop();
                     inflightInstructions.push_back(instruction);
                     reservationStation.currentAdd++;
                     issuedQueue.push(instruction);
@@ -310,7 +303,6 @@ class Tomasulo {
                     registerStatus.status[instruction.RD] = currentStation;
                     //reservationStation.station[currentStation].instruction = instruction;
 
-                    instructionQueue.pop();
                     inflightInstructions.push_back(instruction);
                     reservationStation.currentNand++;
                     issuedQueue.push(instruction);
@@ -343,7 +335,6 @@ class Tomasulo {
                     //reservationStation.station[currentStation].instruction = instruction;
                     registerStatus.status[instruction.RD] = currentStation;
 
-                    instructionQueue.pop();
                     inflightInstructions.push_back(instruction);
                     reservationStation.currentDiv++;
                     issuedQueue.push(instruction);
@@ -369,7 +360,26 @@ class Tomasulo {
                             LoadStoreQueue.pop();
                             
                         }
+                    }else if(it->second.Op == "STORE"){
+
+                    }else if(it->second.Op == "BNE"){
+
+                    }else if(it->second.Op == "CALL"){
+                    
+                    }else if(it->second.Op == "RET"){
+                    
+                    }else if(it->second.Op == "ADD"){
+
+                    }else if(it->second.Op == "ADDI"){
+
+                    }else if(it->second.Op == "NAND"){
+
+                    }else if(it->second.Op == "DIV"){
+
+                    }else{
+                        cout << "Invalid instruction" << endl;
                     }
+
                 }
             }
         }
@@ -455,12 +465,12 @@ class Tomasulo {
 int main(){
 
     Tomasulo tomasulo;
-    queue<Instruction> instructionQueue;
+    vector<Instruction> instructionQueue;
 
-    instructionQueue.push(Instruction("ADD, R1, R2, R3"));
-    instructionQueue.push(Instruction("BNE RS1, RS2, offset"));
-    instructionQueue.push(Instruction("NAND RD, Rs1, Rs2"));
-    instructionQueue.push(Instruction("DIV RD, Rs1, Rs2"));
+    instructionQueue.push_back(Instruction("ADD, R1, R2, R3"));
+    instructionQueue.push_back(Instruction("BNE RS1, RS2, offset"));
+    instructionQueue.push_back(Instruction("NAND RD, Rs1, Rs2"));
+    instructionQueue.push_back(Instruction("DIV RD, Rs1, Rs2"));
 
     tomasulo.instructionQueue = instructionQueue;
     tomasulo.Issue();
