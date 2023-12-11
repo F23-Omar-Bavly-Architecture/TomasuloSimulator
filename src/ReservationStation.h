@@ -9,7 +9,6 @@ public:
         string Qj;
         string Qk;
         int A;
-        Instruction instruction;
         bool Busy;
         int clockCycle;
         int finishesExecutionInCycle;
