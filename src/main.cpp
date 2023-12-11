@@ -366,7 +366,8 @@ class Tomasulo {
                             inflightInstructions.erase(inflightInstructions.begin());
                             it->second.Busy = false;
                             reservationStation.currentLoad--;
-                            reservationStation.cyclesLoad++;
+                            LoadStoreQueue.pop();
+                            
                         }
                 }
             }
