@@ -53,6 +53,7 @@ class Tomasulo {
         array<int, 65536> Memory;
         RegisterFile registerFile;
         queue<int> LoadStoreQueue;
+        map<string, bool> pleaseFree;
 
         uint16_t PC;
         int ClockCycle;
@@ -72,6 +73,10 @@ class Tomasulo {
             cout << "Please enter starting address: ";
             cin >> startingAddress;
             // prompt for data to initialize memory
+            for(auto it = reservationStation.station.begin(); it !=  reservationStation.station.end(); it++)
+            {
+                pleaseFree[it->first] = false;
+            }
         }
         void RunClockCycle();
         void Issue(){
@@ -461,7 +466,6 @@ class Tomasulo {
             // create a min heap of reservation stations based on finishesExecutionInCycle
             // populate heap
         //create a priority queue of reservation stations based on finishesExecutionInCycle
-        Compare compare;
         priority_queue<ReservationStationEntry, vector<ReservationStationEntry>, Compare> pq;
 
         for(auto it = reservationStation.station.begin(); it !=  reservationStation.station.end(); it++)
@@ -472,11 +476,10 @@ class Tomasulo {
         {
             pq.pop();
         }
-
         // pop the top of the heap and check if it is ready to write back
         if(pq.top().stationName[0] == 'A'||pq.top().stationName[0] == 'L'||pq.top().stationName[0] == 'D'||pq.top().stationName[0] == 'N')
         {
-            if(pq.top().finishesExecutionInCycle > ClockCycle)
+            if(pq.top().finishesExecutionInCycle < ClockCycle)
             {
                 for(int i = 0; i < 8; i++)
                 {
@@ -486,7 +489,6 @@ class Tomasulo {
                         registerStatus.status["R" + to_string(i)] = "";
                     }
                 }
-
                 for(auto it = reservationStation.station.begin(); it !=  reservationStation.station.end(); it++)
                 {
                     if(it->second.Qj == pq.top().stationName)
@@ -501,33 +503,92 @@ class Tomasulo {
                     }
                 }
                 reservationStation.station[pq.top().stationName].Busy = false;
+                if(pq.top().stationName[0] == 'A')
+                {
+                    reservationStation.station[pq.top().stationName].Busy = false;
+                    reservationStation.currentAdd--;
+                    pleaseFree[pq.top().stationName] = true;
+                }
+                else if(pq.top().stationName[0] == 'L')
+                {
+                    reservationStation.station[pq.top().stationName].Busy = false;
+                    reservationStation.currentLoad--;
+                    pleaseFree[pq.top().stationName] = true;
+                }
+                else if(pq.top().stationName[0] == 'D')
+                {
+                    reservationStation.station[pq.top().stationName].Busy = false;
+                    reservationStation.currentDiv--;
+                    pleaseFree[pq.top().stationName] = true;
+                }
+                else if(pq.top().stationName[0] == 'N')
+                {
+                    reservationStation.station[pq.top().stationName].Busy = false;
+                    reservationStation.currentNand--;
+                    pleaseFree[pq.top().stationName] = true;
+                }
             }
+        }
+        else if(pq.top().stationName[0] == 'S' && pq.top().finishesExecutionInCycle < ClockCycle)
+        {
+            if(pq.top().Qk == "")
+            { 
+            Memory[pq.top().A] = pq.top().Vk;
+            reservationStation.station[pq.top().stationName].Busy = false;
+            reservationStation.currentStore--;
+            pleaseFree[pq.top().stationName] = true;
+            }
+        }
+        else if(pq.top().stationName[0] == 'B' && pq.top().finishesExecutionInCycle < ClockCycle)
+        {
+            if(pq.top().Result)
+            {
+                PC = pq.top().A+pq.top().PCstart;
+                reservationStation.station[pq.top().stationName].Busy = false;
+                reservationStation.currentBne--;
+                for(auto it = reservationStation.station.begin(); it !=  reservationStation.station.end(); it++)
+                {
+                    if(it->second.clockCycle > pq.top().clockCycle)
+                    {
+                        it->second.Op = "";
+                        it->second.Vj = 0;
+                        it->second.Vk = 0;
+                        it->second.Qj = "";
+                        it->second.Qk = "";
+                        it->second.A = 0;
+                        it->second.Busy = false;
+                        it->second.clockCycle = 0;
+                        it->second.finishesExecutionInCycle = 0;
+                        it->second.Result = 0;
+                    }
+                }
+
+                
+            }
+        }
+        else if(pq.top().stationName[0] == 'C' && pq.top().finishesExecutionInCycle < ClockCycle)
+        {
+            registerFile[1] = pq.top().Result;
+            reservationStation.station[pq.top().stationName].Busy = false;
+            reservationStation.currentCallRet--;
+        }
+        else if(pq.top().stationName[0] == 'R' && pq.top().finishesExecutionInCycle < ClockCycle)
+        {
+            if(registerStatus.status["R1"] == "")
+            {
+            RetInFlight = false;
+            PC = registerFile[1];
+            reservationStation.station[pq.top().stationName].Busy = false;
+            reservationStation.currentCallRet--;
+            }
+            
         }
         else
         {
-            if(pq.top().stationName[0] == 'S')
-            {
-                Memory[pq.top().A] = pq.top().Result;
-                reservationStation.station[pq.top().stationName].Busy = false;
-            }
-            else if(pq.top().stationName[0] == 'B')
-            {
-                if(pq.top().finishesExecutionInCycle > ClockCycle)
-                {
-                    if(pq.top().Result)
-                    {
-                        PC = pq.top().A+pq.top().clockCycle;
-                    }
-                    reservationStation.station[pq.top().stationName].Busy = false;
-                }
-            }
-
+            pq.pop();
         }
 
-
-
-
-        }
+    }
 };
 
 int main(){
