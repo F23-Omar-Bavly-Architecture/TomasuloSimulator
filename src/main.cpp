@@ -64,7 +64,18 @@ class Tomasulo {
         int startingAddress;
 
         bool isFinished(){
-            return PC == instructionQueue.size();
+            // loop over register status and reservation station to check if all are free
+            for(auto it = registerStatus.status.begin(); it != registerStatus.status.end(); it++)
+            {
+                if(it->second != "")
+                    return false;
+            }
+            for(auto it = reservationStation.station.begin(); it !=  reservationStation.station.end(); it++)
+            {
+                if(it->second.Busy)
+                    return false;
+            }
+            return PC == instructionQueue.size() ;
         }
 
 
@@ -111,6 +122,9 @@ class Tomasulo {
             // Check for unused reservation station of that type
 
             if(RetInFlight){
+                return;
+            }
+            if(PC >= instructionQueue.size()){
                 return;
             }
             Instruction instruction = instructionQueue[PC];
@@ -609,12 +623,13 @@ class Tomasulo {
 
         for(auto it = reservationStation.station.begin(); it !=  reservationStation.station.end(); it++)
         {
-            pq.push(it->second);
+            if(it->second.Busy && it->second.executed && it->second.finishesExecutionInCycle < ClockCycle)
+                pq.push(it->second);
         }
-        while(!pq.empty() && !pq.top().Busy)
-        {
-            pq.pop();
-        }
+        // while(!pq.empty() && !pq.top().Busy)
+        // {
+        //     pq.pop();
+        // }
         if(pq.empty())
         {
             return;
@@ -649,22 +664,22 @@ class Tomasulo {
                 if(pq.top().stationName[0] == 'A')
                 {
                     reservationStation.currentAdd--;
-                    pleaseFree[pq.top().stationName] = true;
+                    //pleaseFree[pq.top().stationName] = true;
                 }
                 else if(pq.top().stationName[0] == 'L')
                 {
                     reservationStation.currentLoad--;
-                    pleaseFree[pq.top().stationName] = true;
+                    //pleaseFree[pq.top().stationName] = true;
                 }
                 else if(pq.top().stationName[0] == 'D')
                 {
                     reservationStation.currentDiv--;
-                    pleaseFree[pq.top().stationName] = true;
+                    //pleaseFree[pq.top().stationName] = true;
                 }
                 else if(pq.top().stationName[0] == 'N')
                 {
                     reservationStation.currentNand--;
-                    pleaseFree[pq.top().stationName] = true;
+                    //pleaseFree[pq.top().stationName] = true;
                 }
             }
         }
@@ -674,7 +689,7 @@ class Tomasulo {
             { 
             Memory[pq.top().A] = pq.top().Vk;
             reservationStation.currentStore--;
-            pleaseFree[pq.top().stationName] = true;
+            //pleaseFree[pq.top().stationName] = true;
             instructionStatus[pq.top().clockCycle].push_back(to_string(ClockCycle));
             }
         }
@@ -689,7 +704,7 @@ class Tomasulo {
                 PC = pq.top().A + pq.top().PCStart;
                 reservationStation.currentBne--;
                 instructionStatus[pq.top().clockCycle].push_back(to_string(ClockCycle));
-                pleaseFree[pq.top().stationName] = true;
+                //pleaseFree[pq.top().stationName] = true;
 
                 for(auto it = reservationStation.station.begin(); it !=  reservationStation.station.end(); it++)
                 {
@@ -719,7 +734,8 @@ class Tomasulo {
         {
             registerFile[1] = pq.top().Result;
             reservationStation.currentCallRet--;
-            pleaseFree[pq.top().stationName] = true;
+            //pleaseFree[pq.top().stationName] = true;
+            instructionStatus[pq.top().clockCycle].push_back(to_string(ClockCycle));
         }
         else if(pq.top().stationName[0] == 'R' && pq.top().finishesExecutionInCycle < ClockCycle)
         {
@@ -728,7 +744,8 @@ class Tomasulo {
             RetInFlight = false;
             PC = registerFile[1];
             reservationStation.currentCallRet--;
-            pleaseFree[pq.top().stationName] = true;
+            //pleaseFree[pq.top().stationName] = true;
+            instructionStatus[pq.top().clockCycle].push_back(to_string(ClockCycle));
             }
             
         }
@@ -737,6 +754,7 @@ class Tomasulo {
             cout << "Invalid instruction " << pq.top().stationName << " " << pq.top().Op << endl;
             pq.pop();
         }
+        pleaseFree[pq.top().stationName] = true;
 
     }
         void initializeMem()
@@ -795,7 +813,9 @@ class Tomasulo {
              cout << "Cycle \t" << "Instruction \t" <<"Issue \t" <<"Start EX \t"<<"End EX\t"<<"WB\t" <<endl;
             for(auto it = instructionStatus.begin(); it != instructionStatus.end(); it++)
             {
-               cout << it->first << "\t" << it->second[0] << "\t" << it->second[1] << "\t" << it->second[2] << "\t" << it->second[3] << "\t" << it->second[4] << endl;
+                // only print if not an empty entry
+                if(it->second.size() > 0)
+                    cout << it->first << "\t" << it->second[0] << "\t\t" << it->second[1] << "\t" << it->second[2] << "\t" << it->second[3] << "\t" << it->second[4] << endl;
             }
         }
 };
