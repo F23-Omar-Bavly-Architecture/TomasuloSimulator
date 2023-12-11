@@ -57,6 +57,7 @@ class Tomasulo {
         queue<int> predicting;
         bool RetInFlight;
 
+        map<int,vector<string>> instructionStatus;
 
         uint16_t PC;
         int ClockCycle;
@@ -124,6 +125,8 @@ class Tomasulo {
                             break;
                         }
                     }
+                    instructionStatus[ClockCycle].push_back(instruction.Inst);
+                    instructionStatus[ClockCycle].push_back(to_string(ClockCycle));
                     if(registerStatus.status[instruction.RS1] != ""){ // if not ready
                         reservationStation.station[currentStation].Qj = registerStatus.status[instruction.RS1];
                     }else{
@@ -160,6 +163,8 @@ class Tomasulo {
                             break;
                         }
                     }
+                    instructionStatus[ClockCycle].push_back(instruction.Inst);
+                    instructionStatus[ClockCycle].push_back(to_string(ClockCycle));
                     if(registerStatus.status[instruction.RS1] != ""){ // if not ready
                         reservationStation.station[currentStation].Qj = registerStatus.status[instruction.RS1];
                     }else{
@@ -199,6 +204,9 @@ class Tomasulo {
                             break;
                         }
                     }
+                    instructionStatus[ClockCycle].push_back(instruction.Inst);
+                    instructionStatus[ClockCycle].push_back(to_string(ClockCycle));
+
                     if(registerStatus.status[instruction.RS1] != ""){ // if not ready
                         reservationStation.station[currentStation].Qj = registerStatus.status[instruction.RS1];
                     }else{
@@ -242,6 +250,14 @@ class Tomasulo {
                                 break;
                             }
                         }
+                    for(int i = 0; i < reservationStation.numCallRet; i++){
+                        currentStation = "CallRet" + to_string(i);
+                        if(!reservationStation.station[currentStation].Busy){
+                            break;
+                        }
+                    }
+                    instructionStatus[ClockCycle].push_back(instruction.Inst);
+                    instructionStatus[ClockCycle].push_back(to_string(ClockCycle));
 
                         reservationStation.station[currentStation].A = (instruction.label);
                         registerStatus.status["R1"] = currentStation;
@@ -272,6 +288,8 @@ class Tomasulo {
                             break;
                         }
                     }
+                    instructionStatus[ClockCycle].push_back(instruction.Inst);
+                    instructionStatus[ClockCycle].push_back(to_string(ClockCycle));
 
                     reservationStation.station[currentStation].Busy = true;
                     //reservationStation.station[currentStation].instruction = instruction;
@@ -297,6 +315,9 @@ class Tomasulo {
                             break;
                         }
                     }
+                    instructionStatus[ClockCycle].push_back(instruction.Inst);
+                    instructionStatus[ClockCycle].push_back(to_string(ClockCycle));
+
                     if(registerStatus.status[instruction.RS1] != ""){ // if not ready
                         reservationStation.station[currentStation].Qj = registerStatus.status[instruction.RS1];
                     }else{
@@ -336,6 +357,9 @@ class Tomasulo {
                             break;
                         }
                     }
+                    instructionStatus[ClockCycle].push_back(instruction.Inst);
+                    instructionStatus[ClockCycle].push_back(to_string(ClockCycle));
+
                     if(registerStatus.status[instruction.RS1] != ""){ // if not ready
                         reservationStation.station[currentStation].Qj = registerStatus.status[instruction.RS1];
                     }else{
@@ -371,6 +395,10 @@ class Tomasulo {
                             break;
                         }
                     }
+
+                    instructionStatus[ClockCycle].push_back(instruction.Inst);
+                    instructionStatus[ClockCycle].push_back(to_string(ClockCycle));
+
                     if(registerStatus.status[instruction.RS1] != ""){ // if not ready
                         reservationStation.station[currentStation].Qj = registerStatus.status[instruction.RS1];
                     }else{
@@ -409,6 +437,10 @@ class Tomasulo {
                             break;
                         }
                     }
+
+                    instructionStatus[ClockCycle].push_back(instruction.Inst);
+                    instructionStatus[ClockCycle].push_back(to_string(ClockCycle));
+
                     if(registerStatus.status[instruction.RS1] != ""){ // if not ready
                         reservationStation.station[currentStation].Qj = registerStatus.status[instruction.RS1];
                     }else{
@@ -443,6 +475,25 @@ class Tomasulo {
                 cout << "Invalid instruction" << endl;
             }
 
+            for(auto it = pleaseFree.begin(); it != pleaseFree.end(); it++)
+            {
+                if(it->second)
+                {
+                    reservationStation.station[it->first].Op = "";
+                    reservationStation.station[it->first].Vj = 0;
+                    reservationStation.station[it->first].Vk = 0;
+                    reservationStation.station[it->first].Qj = "";
+                    reservationStation.station[it->first].Qk = "";
+                    reservationStation.station[it->first].A = 0;
+                    reservationStation.station[it->first].Busy = false;
+                    reservationStation.station[it->first].clockCycle = 0;
+                    reservationStation.station[it->first].finishesExecutionInCycle = 0;
+                    reservationStation.station[it->first].Result = 0;
+                    reservationStation.station[it->first].executed = false;
+                    it->second = false;
+                }
+            }
+
         };
         void Execute(){
             // iterate over all busy reservation stations
@@ -458,49 +509,67 @@ class Tomasulo {
                             it->second.Result = Memory[it->second.Vj + (it->second.A)];
                             popLoadStore = true;
                             it->second.finishesExecutionInCycle = ClockCycle + reservationStation.cyclesLoad;
+                            instructionStatus[ClockCycle].push_back(to_string(ClockCycle));
+                            instructionStatus[ClockCycle].push_back(to_string(it->second.finishesExecutionInCycle));
                         }
                     }else if(it->second.Op == "STORE"){
                         if(it->second.Qj == "" && it->second.clockCycle == LoadStoreQueue.front()){
                             it->second.A = it->second.Vj + (it->second.A);
                             popLoadStore = true;
                             it->second.finishesExecutionInCycle = ClockCycle + reservationStation.cyclesStore;
+                            instructionStatus[ClockCycle].push_back(to_string(ClockCycle));
+                            instructionStatus[ClockCycle].push_back(to_string(it->second.finishesExecutionInCycle));
                         }
 
                     }else if(it->second.Op == "BNE"){
                         if(it->second.Qj == "" && it->second.Qk == ""){
                             it->second.Result = it->second.Vj != it->second.Vk;
                             it->second.finishesExecutionInCycle = ClockCycle + reservationStation.cyclesBne;
+                            instructionStatus[ClockCycle].push_back(to_string(ClockCycle));
+                            instructionStatus[ClockCycle].push_back(to_string(it->second.finishesExecutionInCycle));
                         }
                         
                     }else if(it->second.Op == "CALL"){
                         if(it->second.Qj == "" && it->second.Qk == ""){
                             it->second.Result = it->second.PCStart + 1;
                             it->second.finishesExecutionInCycle = ClockCycle + reservationStation.cyclesCallRet;
+                            instructionStatus[ClockCycle].push_back(to_string(ClockCycle));
+                            instructionStatus[ClockCycle].push_back(to_string(it->second.finishesExecutionInCycle));
                         }
                     }else if(it->second.Op == "RET"){
                         it->second.finishesExecutionInCycle = ClockCycle + reservationStation.cyclesCallRet;
+                        instructionStatus[ClockCycle].push_back(to_string(ClockCycle));
+                        instructionStatus[ClockCycle].push_back(to_string(it->second.finishesExecutionInCycle));
                     
                     }else if(it->second.Op == "ADD"){
                         if(it->second.Qj == "" && it->second.Qk == ""){
                             it->second.Result = it->second.Vj + it->second.Vk;
                             it->second.finishesExecutionInCycle = ClockCycle + reservationStation.cyclesAdd;
+                            instructionStatus[ClockCycle].push_back(to_string(ClockCycle));
+                            instructionStatus[ClockCycle].push_back(to_string(it->second.finishesExecutionInCycle));
                         }
                     }else if(it->second.Op == "ADDI"){
                         if(it->second.Qj == ""){
                             it->second.Result = it->second.Vj + it->second.Vk;
                             it->second.finishesExecutionInCycle = ClockCycle + reservationStation.cyclesAdd - 1;
+                            instructionStatus[ClockCycle].push_back(to_string(ClockCycle));
+                            instructionStatus[ClockCycle].push_back(to_string(it->second.finishesExecutionInCycle));
                         }
 
                     }else if(it->second.Op == "NAND"){
                         if(it->second.Qj == "" && it->second.Qk == ""){
                             it->second.Result = ~(it->second.Vj & it->second.Vk);
                             it->second.finishesExecutionInCycle = ClockCycle + reservationStation.cyclesNand - 1;
+                            instructionStatus[ClockCycle].push_back(to_string(ClockCycle));
+                            instructionStatus[ClockCycle].push_back(to_string(it->second.finishesExecutionInCycle));
                         }
 
                     }else if(it->second.Op == "DIV"){
                         if(it->second.Qj == "" && it->second.Qk == ""){
                             it->second.Result = it->second.Vj / it->second.Vk;
                             it->second.finishesExecutionInCycle = ClockCycle + reservationStation.cyclesDiv - 1;
+                            instructionStatus[ClockCycle].push_back(to_string(ClockCycle));
+                            instructionStatus[ClockCycle].push_back(to_string(it->second.finishesExecutionInCycle));
                         }
 
                     }else{
@@ -541,6 +610,7 @@ class Tomasulo {
         {
             if(pq.top().finishesExecutionInCycle < ClockCycle)
             {
+                instructionStatus[ClockCycle].push_back(to_string(ClockCycle));
                 for(int i = 0; i < 8; i++)
                 {
                     if(registerStatus.status["R" + to_string(i)] == pq.top().stationName)
@@ -562,28 +632,23 @@ class Tomasulo {
                         it->second.Qk = "";
                     }
                 }
-                reservationStation.station[pq.top().stationName].Busy = false;
                 if(pq.top().stationName[0] == 'A')
                 {
-                    reservationStation.station[pq.top().stationName].Busy = false;
                     reservationStation.currentAdd--;
                     pleaseFree[pq.top().stationName] = true;
                 }
                 else if(pq.top().stationName[0] == 'L')
                 {
-                    reservationStation.station[pq.top().stationName].Busy = false;
                     reservationStation.currentLoad--;
                     pleaseFree[pq.top().stationName] = true;
                 }
                 else if(pq.top().stationName[0] == 'D')
                 {
-                    reservationStation.station[pq.top().stationName].Busy = false;
                     reservationStation.currentDiv--;
                     pleaseFree[pq.top().stationName] = true;
                 }
                 else if(pq.top().stationName[0] == 'N')
                 {
-                    reservationStation.station[pq.top().stationName].Busy = false;
                     reservationStation.currentNand--;
                     pleaseFree[pq.top().stationName] = true;
                 }
@@ -594,9 +659,9 @@ class Tomasulo {
             if(pq.top().Qk == "")
             { 
             Memory[pq.top().A] = pq.top().Vk;
-            reservationStation.station[pq.top().stationName].Busy = false;
             reservationStation.currentStore--;
             pleaseFree[pq.top().stationName] = true;
+            instructionStatus[ClockCycle].push_back(to_string(ClockCycle));
             }
         }
         else if(pq.top().stationName[0] == 'B' && pq.top().finishesExecutionInCycle < ClockCycle) 
@@ -608,8 +673,10 @@ class Tomasulo {
             {
                 // flush all instructions after the branch
                 PC = pq.top().A + pq.top().PCStart;
-                reservationStation.station[pq.top().stationName].Busy = false;
                 reservationStation.currentBne--;
+                instructionStatus[ClockCycle].push_back(to_string(ClockCycle));
+                pleaseFree[pq.top().stationName] = true;
+
                 for(auto it = reservationStation.station.begin(); it !=  reservationStation.station.end(); it++)
                 {
                     if(it->second.clockCycle > pq.top().clockCycle)
@@ -637,8 +704,8 @@ class Tomasulo {
         else if(pq.top().stationName[0] == 'C' && pq.top().finishesExecutionInCycle < ClockCycle)
         {
             registerFile[1] = pq.top().Result;
-            reservationStation.station[pq.top().stationName].Busy = false;
             reservationStation.currentCallRet--;
+            pleaseFree[pq.top().stationName] = true;
         }
         else if(pq.top().stationName[0] == 'R' && pq.top().finishesExecutionInCycle < ClockCycle)
         {
@@ -646,8 +713,8 @@ class Tomasulo {
             {
             RetInFlight = false;
             PC = registerFile[1];
-            reservationStation.station[pq.top().stationName].Busy = false;
             reservationStation.currentCallRet--;
+            pleaseFree[pq.top().stationName] = true;
             }
             
         }
@@ -657,6 +724,27 @@ class Tomasulo {
         }
 
     }
+        void initializeMem()
+        {
+            int address = 0;
+            while(address != -1)
+            {
+                cout << "Enter address: ";
+                cin >> address;
+                while(address < -1 || address > 65535)
+                {
+                    cout << "Address must be between 0 and 65535" << endl;
+                    cout << "Enter address: ";
+                    cin >> address;
+                }
+                if(address != -1)
+                {
+                    cout << "Enter value: ";
+                    cin >> Memory[address];
+                }
+            }
+        }
+    
 
         void ReadInstructionsFromFile(string filename){
             // output error and prompt user to enter filename again if file does not exist
@@ -693,11 +781,12 @@ int main(){
 
     Tomasulo tomasulo;
     vector<Instruction> instructionQueue;
+    tomasulo.initializeMem();
 
     instructionQueue.push_back(Instruction("ADD, R1, R2, R3"));
-    instructionQueue.push_back(Instruction("BNE RS1, RS2, offset"));
-    instructionQueue.push_back(Instruction("NAND RD, Rs1, Rs2"));
-    instructionQueue.push_back(Instruction("DIV RD, Rs1, Rs2"));
+    instructionQueue.push_back(Instruction("BNE R1, R2, 12"));
+    instructionQueue.push_back(Instruction("NAND R1, R1, R2"));
+    instructionQueue.push_back(Instruction("DIV R1, R1, R2"));
 
     tomasulo.instructionQueue = instructionQueue;
     tomasulo.Issue();
@@ -706,8 +795,6 @@ int main(){
     tomasulo.Issue();
     tomasulo.Issue();
     tomasulo.Issue();
-
-
     return 0;
     
 
