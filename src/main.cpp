@@ -97,7 +97,7 @@ class Tomasulo {
 
                     reservationStation.station[currentStation].A = (instruction.offset);
                     reservationStation.station[currentStation].Busy = true;
-                    reservationStation.station[currentStation].instruction = instruction;
+                    //reservationStation.station[currentStation].instruction = instruction;
 
                     registerStatus.status[instruction.RD] = currentStation;
 
@@ -133,7 +133,7 @@ class Tomasulo {
 
                     reservationStation.station[currentStation].A = (instruction.offset);
                     reservationStation.station[currentStation].Busy = true;
-                    reservationStation.station[currentStation].instruction = instruction;
+                    //reservationStation.station[currentStation].instruction = instruction;
 
                     instructionQueue.pop();
                     inflightInstructions.push_back(instruction);
@@ -167,7 +167,7 @@ class Tomasulo {
 
                     reservationStation.station[currentStation].A = (instruction.offset);
                     reservationStation.station[currentStation].Busy = true;
-                    reservationStation.station[currentStation].instruction = instruction;
+                    //reservationStation.station[currentStation].instruction = instruction;
 
                     instructionQueue.pop();
                     inflightInstructions.push_back(instruction);
@@ -188,7 +188,7 @@ class Tomasulo {
                     reservationStation.station[currentStation].A = (instruction.label);
 
                     reservationStation.station[currentStation].Busy = true;
-                    reservationStation.station[currentStation].instruction = instruction;
+                    //reservationStation.station[currentStation].instruction = instruction;
 
                     instructionQueue.pop();
                     inflightInstructions.push_back(instruction);
@@ -209,7 +209,7 @@ class Tomasulo {
                     }
 
                     reservationStation.station[currentStation].Busy = true;
-                    reservationStation.station[currentStation].instruction = instruction;
+                    //reservationStation.station[currentStation].instruction = instruction;
 
                     instructionQueue.pop();
                     inflightInstructions.push_back(instruction);
@@ -243,7 +243,7 @@ class Tomasulo {
                     }
 
                     reservationStation.station[currentStation].Busy = true;
-                    reservationStation.station[currentStation].instruction = instruction;
+                    //reservationStation.station[currentStation].instruction = instruction;
 
                     registerStatus.status[instruction.RD] = currentStation;
 
@@ -271,7 +271,7 @@ class Tomasulo {
 
                     reservationStation.station[currentStation].Vk = instruction.IMM;
                     reservationStation.station[currentStation].Qk = "";
-                    reservationStation.station[currentStation].instruction = instruction;
+                    //reservationStation.station[currentStation].instruction = instruction;
 
                     reservationStation.station[currentStation].Busy = true;
                     registerStatus.status[instruction.RD] = currentStation;
@@ -308,7 +308,7 @@ class Tomasulo {
 
                     reservationStation.station[currentStation].Busy = true;
                     registerStatus.status[instruction.RD] = currentStation;
-                    reservationStation.station[currentStation].instruction = instruction;
+                    //reservationStation.station[currentStation].instruction = instruction;
 
                     instructionQueue.pop();
                     inflightInstructions.push_back(instruction);
@@ -340,7 +340,7 @@ class Tomasulo {
                     }
 
                     reservationStation.station[currentStation].Busy = true;
-                    reservationStation.station[currentStation].instruction = instruction;
+                    //reservationStation.station[currentStation].instruction = instruction;
                     registerStatus.status[instruction.RD] = currentStation;
 
                     instructionQueue.pop();
