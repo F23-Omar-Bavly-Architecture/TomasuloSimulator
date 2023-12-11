@@ -10,7 +10,7 @@ struct RegisterFile {
         }
         RegisterFile() {
                 for (int i = 0; i < 8; i++) {
-                        val[i] = 0;
+                        val[i] = i;
                 }
         }
 };

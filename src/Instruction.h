@@ -52,27 +52,27 @@ public:
                 else if (op == "ADDI") { //ADDI RD, Rs1, imm
                         RD = vec[1];
                         RS1 = vec[2];
-                        IMM = vec[3];
+                        IMM = stoi(vec[3]);
                 }
                 else if (op == "LOAD") {//LOAD RD, offset(RS1)
                         vector<string> tempvec = splitstring(vec[2], "(");
                         RD = vec[1];
-                        offset = tempvec[0];
+                        offset = stoi(tempvec[0]);
                         RS1 = tempvec[1].substr(0, tempvec[1].length() - 1);
                 }
                 else if (op == "STORE") { //STORE RS2, offset(RS2)
                         vector<string> tempvec = splitstring(vec[2], "(");
                         RS2 = vec[1];
-                        offset = tempvec[0];
+                        offset = stoi(tempvec[0]);
                         RS1 = tempvec[1].substr(0, tempvec[1].length() - 1);
                 }
                 else if (op == "BNE") {//BNE RS1, RS2, offset
                         RS1 = vec[1];
                         RS2 = vec[2];
-                        label = vec[3];
+                        label = stoi(vec[3]);
                 }
                 else if (op == "CALL") {//CALL label
-                        label = vec[1];
+                        label = stoi(vec[1]);
                 }
                 else if (op == "RET") {//RET
                         return;

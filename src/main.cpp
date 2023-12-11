@@ -91,7 +91,7 @@ class Tomasulo {
                     if(registerStatus.status[instruction.RS1] != ""){ // if not ready
                         reservationStation.station[currentStation].Qj = registerStatus.status[instruction.RS1];
                     }else{
-                        reservationStation.station[currentStation].Vj = registerFile[stoi(instruction.RS1)];
+                        reservationStation.station[currentStation].Vj = registerFile[(instruction.RS1[1]-'0')];
                         reservationStation.station[currentStation].Qj = "";
                     }
 
@@ -120,14 +120,14 @@ class Tomasulo {
                     if(registerStatus.status[instruction.RS1] != ""){ // if not ready
                         reservationStation.station[currentStation].Qj = registerStatus.status[instruction.RS1];
                     }else{
-                        reservationStation.station[currentStation].Vj = registerFile[stoi(instruction.RS1)];
+                        reservationStation.station[currentStation].Vj = registerFile[(instruction.RS1[1]-'0')];
                         reservationStation.station[currentStation].Qj = "";
                     }
 
                     if(registerStatus.status[instruction.RS2] != ""){ // if not ready
-                        reservationStation.station[currentStation].Qk = registerStatus.status[instruction.RS2];
+                        reservationStation.station[currentStation].Qk = registerFile[(instruction.RS2[1]-'0')];
                     }else{
-                        reservationStation.station[currentStation].Vk = registerFile[stoi(instruction.RS2)];
+                        reservationStation.station[currentStation].Vk = registerFile[(instruction.RS1[1]-'0')];
                         reservationStation.station[currentStation].Qk = "";
                     }
 
@@ -154,14 +154,14 @@ class Tomasulo {
                     if(registerStatus.status[instruction.RS1] != ""){ // if not ready
                         reservationStation.station[currentStation].Qj = registerStatus.status[instruction.RS1];
                     }else{
-                        reservationStation.station[currentStation].Vj = registerFile[stoi(instruction.RS1)];
+                        reservationStation.station[currentStation].Vj = registerFile[(instruction.RS1[1]-'0')];
                         reservationStation.station[currentStation].Qj = "";
                     }
 
                     if(registerStatus.status[instruction.RS2] != ""){ // if not ready
                         reservationStation.station[currentStation].Qk = registerStatus.status[instruction.RS2];
                     }else{
-                        reservationStation.station[currentStation].Vk = registerFile[stoi(instruction.RS2)];
+                        reservationStation.station[currentStation].Vk = registerFile[(instruction.RS2[1]-'0')];
                         reservationStation.station[currentStation].Qk = "";
                     }
 
@@ -231,14 +231,14 @@ class Tomasulo {
                     if(registerStatus.status[instruction.RS1] != ""){ // if not ready
                         reservationStation.station[currentStation].Qj = registerStatus.status[instruction.RS1];
                     }else{
-                        reservationStation.station[currentStation].Vj = registerFile[stoi(instruction.RS1)];
+                        reservationStation.station[currentStation].Vj = registerFile[(instruction.RS1[1]-'0')];
                         reservationStation.station[currentStation].Qj = "";
                     }
 
                     if(registerStatus.status[instruction.RS2] != ""){ // if not ready
                         reservationStation.station[currentStation].Qk = registerStatus.status[instruction.RS2];
                     }else{
-                        reservationStation.station[currentStation].Vk = registerFile[stoi(instruction.RS2)];
+                        reservationStation.station[currentStation].Vk = registerFile[(instruction.RS2[1]-'0')];
                         reservationStation.station[currentStation].Qk = "";
                     }
 
@@ -265,7 +265,7 @@ class Tomasulo {
                     if(registerStatus.status[instruction.RS1] != ""){ // if not ready
                         reservationStation.station[currentStation].Qj = registerStatus.status[instruction.RS1];
                     }else{
-                        reservationStation.station[currentStation].Vj = registerFile[stoi(instruction.RS1)];
+                        reservationStation.station[currentStation].Vj = registerFile[(instruction.RS1[1]-'0')];
                         reservationStation.station[currentStation].Qj = "";
                     }
 
@@ -295,14 +295,14 @@ class Tomasulo {
                     if(registerStatus.status[instruction.RS1] != ""){ // if not ready
                         reservationStation.station[currentStation].Qj = registerStatus.status[instruction.RS1];
                     }else{
-                        reservationStation.station[currentStation].Vj = registerFile[stoi(instruction.RS1)];
+                        reservationStation.station[currentStation].Vj = registerFile[(instruction.RS1[1]-'0')];
                         reservationStation.station[currentStation].Qj = "";
                     }
 
                     if(registerStatus.status[instruction.RS2] != ""){ // if not ready
                         reservationStation.station[currentStation].Qk = registerStatus.status[instruction.RS2];
                     }else{
-                        reservationStation.station[currentStation].Vk = registerFile[stoi(instruction.RS2)];
+                        reservationStation.station[currentStation].Vk = registerFile[(instruction.RS2[1]-'0')];
                         reservationStation.station[currentStation].Qk = "";
                     }
 
@@ -328,14 +328,14 @@ class Tomasulo {
                     if(registerStatus.status[instruction.RS1] != ""){ // if not ready
                         reservationStation.station[currentStation].Qj = registerStatus.status[instruction.RS1];
                     }else{
-                        reservationStation.station[currentStation].Vj = registerFile[stoi(instruction.RS1)];
+                        reservationStation.station[currentStation].Vj = registerFile[(instruction.RS1[1]-'0')];
                         reservationStation.station[currentStation].Qj = "";
                     }
 
                     if(registerStatus.status[instruction.RS2] != ""){ // if not ready
                         reservationStation.station[currentStation].Qk = registerStatus.status[instruction.RS2];
                     }else{
-                        reservationStation.station[currentStation].Vk = registerFile[stoi(instruction.RS2)];
+                        reservationStation.station[currentStation].Vk = registerFile[(instruction.RS2[1]-'0')];
                         reservationStation.station[currentStation].Qk = "";
                     }
 
@@ -375,5 +375,25 @@ class Tomasulo {
 };
 
 int main(){
+
+    Tomasulo tomasulo;
+    queue<Instruction> instructionQueue;
+
+    instructionQueue.push(Instruction("ADD, R1, R2, R3"));
+    instructionQueue.push(Instruction("BNE RS1, RS2, offset"));
+    instructionQueue.push(Instruction("NAND RD, Rs1, Rs2"));
+    instructionQueue.push(Instruction("DIV RD, Rs1, Rs2"));
+
+    tomasulo.instructionQueue = instructionQueue;
+    tomasulo.Issue();
+    tomasulo.PC++;
+    tomasulo.ClockCycle++;
+    tomasulo.Issue();
+    tomasulo.Issue();
+    tomasulo.Issue();
+
+
+    return 0;
+    
 
 }
