@@ -125,9 +125,9 @@ class Tomasulo {
                     }
 
                     if(registerStatus.status[instruction.RS2] != ""){ // if not ready
-                        reservationStation.station[currentStation].Qk = registerFile[(instruction.RS2[1]-'0')];
+                        reservationStation.station[currentStation].Qk = registerStatus.status[instruction.RS2];
                     }else{
-                        reservationStation.station[currentStation].Vk = registerFile[(instruction.RS1[1]-'0')];
+                        reservationStation.station[currentStation].Vk = registerFile[(instruction.RS2[1]-'0')];
                         reservationStation.station[currentStation].Qk = "";
                     }
 
@@ -372,7 +372,11 @@ class Tomasulo {
                 }
             }
         };
-        void WriteBack();
+        void WriteBack() {
+            // iterate over all busy reservation stations
+            auto it = reservationStation.station.begin();
+            
+        }
 };
 
 int main(){
