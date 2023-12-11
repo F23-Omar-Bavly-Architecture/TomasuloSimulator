@@ -519,67 +519,67 @@ class Tomasulo {
                             it->second.Result = Memory[it->second.Vj + (it->second.A)];
                             popLoadStore = true;
                             it->second.finishesExecutionInCycle = ClockCycle + reservationStation.cyclesLoad;
-                            instructionStatus[ClockCycle].push_back(to_string(ClockCycle));
-                            instructionStatus[ClockCycle].push_back(to_string(it->second.finishesExecutionInCycle));
+                            instructionStatus[it->second.clockCycle].push_back(to_string(ClockCycle));
+                            instructionStatus[it->second.clockCycle].push_back(to_string(it->second.finishesExecutionInCycle));
                         }
                     }else if(it->second.Op == "STORE"){
                         if(it->second.Qj == "" && it->second.clockCycle == LoadStoreQueue.front()){
                             it->second.A = it->second.Vj + (it->second.A);
                             popLoadStore = true;
                             it->second.finishesExecutionInCycle = ClockCycle + reservationStation.cyclesStore;
-                            instructionStatus[ClockCycle].push_back(to_string(ClockCycle));
-                            instructionStatus[ClockCycle].push_back(to_string(it->second.finishesExecutionInCycle));
+                            instructionStatus[it->second.clockCycle].push_back(to_string(ClockCycle));
+                            instructionStatus[it->second.clockCycle].push_back(to_string(it->second.finishesExecutionInCycle));
                         }
 
                     }else if(it->second.Op == "BNE"){
                         if(it->second.Qj == "" && it->second.Qk == ""){
                             it->second.Result = it->second.Vj != it->second.Vk;
                             it->second.finishesExecutionInCycle = ClockCycle + reservationStation.cyclesBne;
-                            instructionStatus[ClockCycle].push_back(to_string(ClockCycle));
-                            instructionStatus[ClockCycle].push_back(to_string(it->second.finishesExecutionInCycle));
+                            instructionStatus[it->second.clockCycle].push_back(to_string(ClockCycle));
+                            instructionStatus[it->second.clockCycle].push_back(to_string(it->second.finishesExecutionInCycle));
                         }
                         
                     }else if(it->second.Op == "CALL"){
                         if(it->second.Qj == "" && it->second.Qk == ""){
                             it->second.Result = it->second.PCStart + 1;
                             it->second.finishesExecutionInCycle = ClockCycle + reservationStation.cyclesCallRet;
-                            instructionStatus[ClockCycle].push_back(to_string(ClockCycle));
-                            instructionStatus[ClockCycle].push_back(to_string(it->second.finishesExecutionInCycle));
+                            instructionStatus[it->second.clockCycle].push_back(to_string(ClockCycle));
+                            instructionStatus[it->second.clockCycle].push_back(to_string(it->second.finishesExecutionInCycle));
                         }
                     }else if(it->second.Op == "RET"){
                         it->second.finishesExecutionInCycle = ClockCycle + reservationStation.cyclesCallRet;
-                        instructionStatus[ClockCycle].push_back(to_string(ClockCycle));
-                        instructionStatus[ClockCycle].push_back(to_string(it->second.finishesExecutionInCycle));
+                        instructionStatus[it->second.clockCycle].push_back(to_string(ClockCycle));
+                        instructionStatus[it->second.clockCycle].push_back(to_string(it->second.finishesExecutionInCycle));
                     
                     }else if(it->second.Op == "ADD"){
                         if(it->second.Qj == "" && it->second.Qk == ""){
                             it->second.Result = it->second.Vj + it->second.Vk;
                             it->second.finishesExecutionInCycle = ClockCycle + reservationStation.cyclesAdd;
-                            instructionStatus[ClockCycle].push_back(to_string(ClockCycle));
-                            instructionStatus[ClockCycle].push_back(to_string(it->second.finishesExecutionInCycle));
+                            instructionStatus[it->second.clockCycle].push_back(to_string(ClockCycle));
+                            instructionStatus[it->second.clockCycle].push_back(to_string(it->second.finishesExecutionInCycle));
                         }
                     }else if(it->second.Op == "ADDI"){
                         if(it->second.Qj == ""){
                             it->second.Result = it->second.Vj + it->second.Vk;
                             it->second.finishesExecutionInCycle = ClockCycle + reservationStation.cyclesAdd - 1;
-                            instructionStatus[ClockCycle].push_back(to_string(ClockCycle));
-                            instructionStatus[ClockCycle].push_back(to_string(it->second.finishesExecutionInCycle));
+                            instructionStatus[it->second.clockCycle].push_back(to_string(ClockCycle));
+                            instructionStatus[it->second.clockCycle].push_back(to_string(it->second.finishesExecutionInCycle));
                         }
 
                     }else if(it->second.Op == "NAND"){
                         if(it->second.Qj == "" && it->second.Qk == ""){
                             it->second.Result = ~(it->second.Vj & it->second.Vk);
                             it->second.finishesExecutionInCycle = ClockCycle + reservationStation.cyclesNand - 1;
-                            instructionStatus[ClockCycle].push_back(to_string(ClockCycle));
-                            instructionStatus[ClockCycle].push_back(to_string(it->second.finishesExecutionInCycle));
+                            instructionStatus[it->second.clockCycle].push_back(to_string(ClockCycle));
+                            instructionStatus[it->second.clockCycle].push_back(to_string(it->second.finishesExecutionInCycle));
                         }
 
                     }else if(it->second.Op == "DIV"){
                         if(it->second.Qj == "" && it->second.Qk == ""){
                             it->second.Result = it->second.Vj / it->second.Vk;
                             it->second.finishesExecutionInCycle = ClockCycle + reservationStation.cyclesDiv - 1;
-                            instructionStatus[ClockCycle].push_back(to_string(ClockCycle));
-                            instructionStatus[ClockCycle].push_back(to_string(it->second.finishesExecutionInCycle));
+                            instructionStatus[it->second.clockCycle].push_back(to_string(ClockCycle));
+                            instructionStatus[it->second.clockCycle].push_back(to_string(it->second.finishesExecutionInCycle));
                         }
 
                     }else{
@@ -624,7 +624,7 @@ class Tomasulo {
         {
             if(pq.top().finishesExecutionInCycle < ClockCycle)
             {
-                instructionStatus[ClockCycle].push_back(to_string(ClockCycle));
+                instructionStatus[pq.top().clockCycle].push_back(to_string(ClockCycle));
                 for(int i = 0; i < 8; i++)
                 {
                     if(registerStatus.status["R" + to_string(i)] == pq.top().stationName)
@@ -675,7 +675,7 @@ class Tomasulo {
             Memory[pq.top().A] = pq.top().Vk;
             reservationStation.currentStore--;
             pleaseFree[pq.top().stationName] = true;
-            instructionStatus[ClockCycle].push_back(to_string(ClockCycle));
+            instructionStatus[pq.top().clockCycle].push_back(to_string(ClockCycle));
             }
         }
         else if(pq.top().stationName[0] == 'B' && pq.top().finishesExecutionInCycle < ClockCycle) 
@@ -688,7 +688,7 @@ class Tomasulo {
                 // flush all instructions after the branch
                 PC = pq.top().A + pq.top().PCStart;
                 reservationStation.currentBne--;
-                instructionStatus[ClockCycle].push_back(to_string(ClockCycle));
+                instructionStatus[pq.top().clockCycle].push_back(to_string(ClockCycle));
                 pleaseFree[pq.top().stationName] = true;
 
                 for(auto it = reservationStation.station.begin(); it !=  reservationStation.station.end(); it++)
