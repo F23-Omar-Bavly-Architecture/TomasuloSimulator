@@ -97,7 +97,7 @@ class Tomasulo {
 
                     reservationStation.station[currentStation].A = (instruction.offset);
                     reservationStation.station[currentStation].Busy = true;
-                    reservationStation.station[currentStation].instruction = instruction;
+                    //reservationStation.station[currentStation].instruction = instruction;
 
                     registerStatus.status[instruction.RD] = currentStation;
 
@@ -133,7 +133,7 @@ class Tomasulo {
 
                     reservationStation.station[currentStation].A = (instruction.offset);
                     reservationStation.station[currentStation].Busy = true;
-                    reservationStation.station[currentStation].instruction = instruction;
+                    //reservationStation.station[currentStation].instruction = instruction;
 
                     instructionQueue.pop();
                     inflightInstructions.push_back(instruction);
@@ -167,7 +167,7 @@ class Tomasulo {
 
                     reservationStation.station[currentStation].A = (instruction.offset);
                     reservationStation.station[currentStation].Busy = true;
-                    reservationStation.station[currentStation].instruction = instruction;
+                    //reservationStation.station[currentStation].instruction = instruction;
 
                     instructionQueue.pop();
                     inflightInstructions.push_back(instruction);
@@ -188,7 +188,7 @@ class Tomasulo {
                     reservationStation.station[currentStation].A = (instruction.label);
 
                     reservationStation.station[currentStation].Busy = true;
-                    reservationStation.station[currentStation].instruction = instruction;
+                    //reservationStation.station[currentStation].instruction = instruction;
 
                     instructionQueue.pop();
                     inflightInstructions.push_back(instruction);
@@ -209,7 +209,7 @@ class Tomasulo {
                     }
 
                     reservationStation.station[currentStation].Busy = true;
-                    reservationStation.station[currentStation].instruction = instruction;
+                    //reservationStation.station[currentStation].instruction = instruction;
 
                     instructionQueue.pop();
                     inflightInstructions.push_back(instruction);
@@ -243,7 +243,7 @@ class Tomasulo {
                     }
 
                     reservationStation.station[currentStation].Busy = true;
-                    reservationStation.station[currentStation].instruction = instruction;
+                    //reservationStation.station[currentStation].instruction = instruction;
 
                     registerStatus.status[instruction.RD] = currentStation;
 
@@ -271,7 +271,7 @@ class Tomasulo {
 
                     reservationStation.station[currentStation].Vk = instruction.IMM;
                     reservationStation.station[currentStation].Qk = "";
-                    reservationStation.station[currentStation].instruction = instruction;
+                    //reservationStation.station[currentStation].instruction = instruction;
 
                     reservationStation.station[currentStation].Busy = true;
                     registerStatus.status[instruction.RD] = currentStation;
@@ -308,7 +308,7 @@ class Tomasulo {
 
                     reservationStation.station[currentStation].Busy = true;
                     registerStatus.status[instruction.RD] = currentStation;
-                    reservationStation.station[currentStation].instruction = instruction;
+                    //reservationStation.station[currentStation].instruction = instruction;
 
                     instructionQueue.pop();
                     inflightInstructions.push_back(instruction);
@@ -340,7 +340,7 @@ class Tomasulo {
                     }
 
                     reservationStation.station[currentStation].Busy = true;
-                    reservationStation.station[currentStation].instruction = instruction;
+                    //reservationStation.station[currentStation].instruction = instruction;
                     registerStatus.status[instruction.RD] = currentStation;
 
                     instructionQueue.pop();
@@ -373,10 +373,73 @@ class Tomasulo {
                 }
             }
         }
+        struct Compare {
+        bool operator()(const ReservationStationEntry& lhs, const ReservationStationEntry& rhs) const {
+            return lhs.finishesExecutionInCycle < rhs.finishesExecutionInCycle; 
+        }
+        };
         void WriteBack() {
-            // iterate over all busy reservation stations
-            auto it = reservationStation.station.begin();
-            
+
+            // create a min heap of reservation stations based on finishesExecutionInCycle
+            // populate heap
+        //create a priority queue of reservation stations based on finishesExecutionInCycle
+        Compare compare;
+        priority_queue<ReservationStationEntry, vector<ReservationStationEntry>, Compare> pq;
+
+        for(auto it = reservationStation.station.begin(); it !=  reservationStation.station.end(); it++)
+        {
+            pq.push(it->second);
+        }
+        while(!pq.top().Busy)
+        {
+            pq.pop();
+        }
+
+        // pop the top of the heap and check if it is ready to write back
+        if(pq.top().stationName[0] == 'A'||pq.top().stationName[0] == 'L'||pq.top().stationName[0] == 'D'||pq.top().stationName[0] == 'N')
+        {
+            if(pq.top().finishesExecutionInCycle > ClockCycle)
+            {
+                for(int i = 0; i < 8; i++)
+                {
+                    if(registerStatus.status["R" + to_string(i)] == pq.top().stationName)
+                    {
+                        registerFile[i] = pq.top().Result;
+                        registerStatus.status["R" + to_string(i)] = "";
+                    }
+                }
+
+                for(auto it = reservationStation.station.begin(); it !=  reservationStation.station.end(); it++)
+                {
+                    if(it->second.Qj == pq.top().stationName)
+                    {
+                        it->second.Vj = pq.top().Result;
+                        it->second.Qj = "";
+                    }
+                    if(it->second.Qk == pq.top().stationName)
+                    {
+                        it->second.Vk = pq.top().Result;
+                        it->second.Qk = "";
+                    }
+                }
+                reservationStation.station[pq.top().stationName].Busy = false;
+                pq.pop();
+            }
+        }
+        else
+        {
+            if(pq.top().stationName[0] == 'S')
+            {
+                Memory[pq.top().A] = pq.top().Result;
+                reservationStation.station[pq.top().stationName].Busy = false;
+                pq.pop();
+            }
+
+        }
+
+
+
+
         }
 };
 

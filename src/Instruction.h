@@ -6,6 +6,7 @@ using namespace std;
 //BNE RS1, RS2, offset
 //CALL label
 //RET
+
 //ADD RD, Rs1, Rs2
 //ADDI RD, Rs1, imm
 //NAND RD, Rs1, Rs2

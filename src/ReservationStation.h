@@ -3,18 +3,19 @@ using namespace std;
 
 class ReservationStationEntry {
 public:
+        string stationName;
         string Op;
         int Vj;
         int Vk;
         string Qj;
         string Qk;
         int A;
-        Instruction instruction;
         bool Busy;
         int clockCycle;
         int finishesExecutionInCycle;
         uint16_t Result;
         ReservationStationEntry() {
+                stationName = "";
                 Op = "";
                 Vj = 0;
                 Vk = 0;
@@ -88,24 +89,31 @@ public:
                 }
                 for (int i = 0; i < numLoad; i++) {
                         station["Load" + to_string(i)] = ReservationStationEntry();
+                        station["Load" + to_string(i)].stationName = "Load" + to_string(i);
                 }
                 for (int i = 0; i < numStore; i++) {
                         station["Store" + to_string(i)] = ReservationStationEntry();
+                        station["Store" + to_string(i)].stationName = "Store" + to_string(i);
                 }
                 for (int i = 0; i < numBne; i++) {
                         station["Bne" + to_string(i)] = ReservationStationEntry();
+                        station["Bne" + to_string(i)].stationName = "Bne" + to_string(i);
                 }
                 for (int i = 0; i < numCallRet; i++) {
                         station["CallRet" + to_string(i)] = ReservationStationEntry();
+                        station["CallRet" + to_string(i)].stationName = "CallRet" + to_string(i);
                 }
                 for (int i = 0; i < numAdd; i++) {
                         station["Add" + to_string(i)] = ReservationStationEntry();
+                        station["Add" + to_string(i)].stationName = "Add" + to_string(i);
                 }
                 for (int i = 0; i < numNand; i++) {
                         station["Nand" + to_string(i)] = ReservationStationEntry();
+                        station["Nand" + to_string(i)].stationName = "Nand" + to_string(i);
                 }
                 for (int i = 0; i < numDiv; i++) {
                         station["Div" + to_string(i)] = ReservationStationEntry();
+                        station["Div" + to_string(i)].stationName = "Div" + to_string(i);
                 }
 
                 // prompt user for the number of cycles required by each FU, must be > 0
