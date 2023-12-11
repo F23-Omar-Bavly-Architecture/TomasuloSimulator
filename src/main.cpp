@@ -593,17 +593,38 @@ class Tomasulo {
         }
 
     }
+        void initializeMem()
+        {
+            int address = 0;
+            while(address != -1)
+            {
+                cout << "Enter address: ";
+                cin >> address;
+                while(address < -1 || address > 65535)
+                {
+                    cout << "Address must be between 0 and 65535" << endl;
+                    cout << "Enter address: ";
+                    cin >> address;
+                }
+                if(address != -1)
+                {
+                    cout << "Enter value: ";
+                    cin >> Memory[address];
+                }
+            }
+        }
 };
 
 int main(){
 
     Tomasulo tomasulo;
     vector<Instruction> instructionQueue;
+    tomasulo.initializeMem();
 
     instructionQueue.push_back(Instruction("ADD, R1, R2, R3"));
-    instructionQueue.push_back(Instruction("BNE RS1, RS2, offset"));
-    instructionQueue.push_back(Instruction("NAND RD, Rs1, Rs2"));
-    instructionQueue.push_back(Instruction("DIV RD, Rs1, Rs2"));
+    instructionQueue.push_back(Instruction("BNE R1, R2, 12"));
+    instructionQueue.push_back(Instruction("NAND R1, R1, R2"));
+    instructionQueue.push_back(Instruction("DIV R1, R1, R2"));
 
     tomasulo.instructionQueue = instructionQueue;
     tomasulo.Issue();
