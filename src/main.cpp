@@ -390,6 +390,9 @@ class Tomasulo {
         };
         void Execute(){
             // iterate over all busy reservation stations
+            if(RetInFlight){
+                return;
+            }
             auto it = reservationStation.station.begin();
             bool popLoadStore = false;
             while(it != reservationStation.station.end()){
