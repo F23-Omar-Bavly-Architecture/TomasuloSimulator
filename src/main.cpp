@@ -450,6 +450,7 @@ class Tomasulo {
                     }else{
                         cout << "Invalid instruction" << endl;
                     }
+                    it->second.executed = true;
                 }
                 it++;
             }
