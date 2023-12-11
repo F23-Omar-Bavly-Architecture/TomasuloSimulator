@@ -15,6 +15,7 @@ public:
         int PCStart;
         int finishesExecutionInCycle;
         uint16_t Result;
+        bool executed;
         ReservationStationEntry() {
                 stationName = "";
                 Op = "";
@@ -28,6 +29,7 @@ public:
                 PCStart = 0;
                 finishesExecutionInCycle = 0;
                 Result = 0;
+                executed = false;
         }
 };
 

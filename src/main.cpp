@@ -396,7 +396,7 @@ class Tomasulo {
             auto it = reservationStation.station.begin();
             bool popLoadStore = false;
             while(it != reservationStation.station.end()){
-                if(it->second.Busy){
+                if(it->second.Busy && !it->second.executed){
                     if(it->second.Op == "LOAD"){
                         if(it->second.Qj == "" && it->second.clockCycle == LoadStoreQueue.front()){
                             it->second.Result = Memory[it->second.Vj + (it->second.A)];
