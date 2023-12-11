@@ -368,9 +368,10 @@ class Tomasulo {
                             reservationStation.currentLoad--;
                             reservationStation.cyclesLoad++;
                         }
+                    }
                 }
             }
-        };
+        }
         void WriteBack() {
             // iterate over all busy reservation stations
             auto it = reservationStation.station.begin();

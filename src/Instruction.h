@@ -39,6 +39,16 @@ public:
                 this->Inst = Inst;
                 parse();
         }
+        Instruction() {
+                Inst = "";
+                op = "";
+                IMM = 0;
+                label = 0;
+                offset = 0;
+                RD = "";
+                RS1 = "";
+                RS2 = "";
+        }
         void parse()
         {
                 Inst.erase(remove(Inst.begin(), Inst.end(), ','), Inst.end());
