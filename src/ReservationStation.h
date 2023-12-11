@@ -12,6 +12,7 @@ public:
         Instruction instruction;
         bool Busy;
         int clockCycle;
+        int finishesExecutionInCycle;
         uint16_t Result;
         ReservationStationEntry() {
                 Op = "";
@@ -22,6 +23,7 @@ public:
                 A = 0;
                 Busy = false;
                 clockCycle = 0;
+                finishesExecutionInCycle = 0;
                 Result = 0;
         }
 };
