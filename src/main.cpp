@@ -53,6 +53,7 @@ class Tomasulo {
         array<int, 65536> Memory;
         RegisterFile registerFile;
         queue<int> LoadStoreQueue;
+        map<string, bool> pleaseFree;
 
         uint16_t PC;
         int ClockCycle;
@@ -69,6 +70,10 @@ class Tomasulo {
             // populate instruction queue either with use input or from file
             // prompt for starting address if file is used
             // prompt for data to initialize memory
+            for(auto it = reservationStation.station.begin(); it !=  reservationStation.station.end(); it++)
+            {
+                pleaseFree[it->first] = false;
+            }
         }
         void RunClockCycle();
         void Issue(){
@@ -418,7 +423,6 @@ class Tomasulo {
                         registerStatus.status["R" + to_string(i)] = "";
                     }
                 }
-
                 for(auto it = reservationStation.station.begin(); it !=  reservationStation.station.end(); it++)
                 {
                     if(it->second.Qj == pq.top().stationName)
@@ -433,14 +437,41 @@ class Tomasulo {
                     }
                 }
                 reservationStation.station[pq.top().stationName].Busy = false;
+                if(pq.top().stationName[0] == 'A')
+                {
+                    reservationStation.station[pq.top().stationName].Busy = false;
+                    reservationStation.currentAdd--;
+                    pleaseFree[pq.top().stationName] = true;
+                }
+                else if(pq.top().stationName[0] == 'L')
+                {
+                    reservationStation.station[pq.top().stationName].Busy = false;
+                    reservationStation.currentLoad--;
+                    pleaseFree[pq.top().stationName] = true;
+                }
+                else if(pq.top().stationName[0] == 'D')
+                {
+                    reservationStation.station[pq.top().stationName].Busy = false;
+                    reservationStation.currentDiv--;
+                    pleaseFree[pq.top().stationName] = true;
+                }
+                else if(pq.top().stationName[0] == 'N')
+                {
+                    reservationStation.station[pq.top().stationName].Busy = false;
+                    reservationStation.currentNand--;
+                    pleaseFree[pq.top().stationName] = true;
+                }
             }
         }
         else
         {
             if(pq.top().stationName[0] == 'S')
             {
-                Memory[pq.top().A] = pq.top().Result;
+               if(pq.top().Qk == "")
+                Memory[pq.top().A] = pq.top().Vk;
                 reservationStation.station[pq.top().stationName].Busy = false;
+                reservationStation.currentStore--;
+                pleaseFree[pq.top().stationName] = true;
             }
             else if(pq.top().stationName[0] == 'B')
             {
@@ -449,8 +480,27 @@ class Tomasulo {
                     if(pq.top().Result)
                     {
                         PC = pq.top().A+pq.top().clockCycle;
+                        reservationStation.station[pq.top().stationName].Busy = false;
+                        reservationStation.currentBne--;
+                        for(auto it = reservationStation.station.begin(); it !=  reservationStation.station.end(); it++)
+                        {
+                            if(it->second.clockCycle > pq.top().clockCycle)
+                            {
+                                it->second.Op = "";
+                                it->second.Vj = 0;
+                                it->second.Vk = 0;
+                                it->second.Qj = "";
+                                it->second.Qk = "";
+                                it->second.A = 0;
+                                it->second.Busy = false;
+                                it->second.clockCycle = 0;
+                                it->second.finishesExecutionInCycle = 0;
+                                it->second.Result = 0;
+                            }
+                        }
+
+                        
                     }
-                    reservationStation.station[pq.top().stationName].Busy = false;
                 }
             }
 
