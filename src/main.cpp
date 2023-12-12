@@ -925,15 +925,15 @@ class Tomasulo {
         }
         void printTable()
         {
-             cout << "Cycle \t" << "Instruction \t\t" <<"Issue \t" <<"Start EX \t"<<"End EX\t"<<"WB\t" <<endl;
+             cout << "Cycle \t" << "Instruction \t\t" <<"Issue \t" <<"Start EX \t"<<"End EX\t\t"<<"WB\t" <<endl;
             for(auto it = instructionStatus.begin(); it != instructionStatus.end(); it++)
             {
                 // only print if not an empty entry
                 if(it->second.size() == 5){
                     if(it->second[0][0] == 'R' || it->second[0][0] == 'C'){
-                        cout << it->first << "\t" << it->second[0] << "\t\t\t" << it->second[1] << "\t" << it->second[2] << "\t" << it->second[3] << "\t" << it->second[4] << endl;
+                        cout << it->first << "\t" << it->second[0] << "\t\t\t" << it->second[1] << "\t" << it->second[2] << "\t\t" << it->second[3] << "\t\t" << it->second[4] << endl;
                     }else{
-                        cout << it->first << "\t" << it->second[0] << "\t\t" << it->second[1] << "\t" << it->second[2] << "\t" << it->second[3] << "\t" << it->second[4] << endl;
+                        cout << it->first << "\t" << it->second[0] << "\t\t" << it->second[1] << "\t" << it->second[2] << "\t\t" << it->second[3] << "\t\t" << it->second[4] << endl;
                     }
                 }else if(it->second.size() == 2){
                     cout << it->first << "\t" << it->second[0] << "\t\t" << it->second[1] << "\tFLUSHED" << endl;
