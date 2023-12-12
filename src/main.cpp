@@ -778,7 +778,8 @@ class Tomasulo {
         {
             //predicting = false;
             // remove this inst from the prediction queue
-            predicting.pop();
+            if(!predicting.empty())
+                predicting.pop();
             if(pq.top().Result) // taken logic
             {
                 // flush all instructions after the branch
@@ -795,7 +796,8 @@ class Tomasulo {
                         if(it->second.stationName[0] == 'B')
                         {
                             // remove this inst from the prediction queue
-                            predicting.pop();
+                            if(!predicting.empty())
+                                predicting.pop();
                         }
                         it->second.Op = "";
                         it->second.Vj = 0;
@@ -816,6 +818,11 @@ class Tomasulo {
                         else if(it->first[0] == 'B') reservationStation.currentBne--;
                     }
                 }
+            }else{
+                //reservationStation.currentBne--;
+                pleaseFree[pq.top().stationName] = true;
+                instructionStatus[pq.top().clockCycle].push_back(to_string(ClockCycle));
+                
             }
         }
         else if(pq.top().stationName[0] == 'C' && pq.top().finishesExecutionInCycle < ClockCycle)
