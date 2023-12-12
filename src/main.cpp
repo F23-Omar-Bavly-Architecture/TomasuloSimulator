@@ -319,14 +319,9 @@ class Tomasulo {
                                 break;
                             }
                         }
-                    for(int i = 0; i < reservationStation.numCallRet; i++){
-                        currentStation = "CallRet" + to_string(i);
-                        if(!reservationStation.station[currentStation].Busy){
-                            break;
-                        }
-                    }
-                    instructionStatus[ClockCycle].push_back(instruction.Inst);
-                    instructionStatus[ClockCycle].push_back(to_string(ClockCycle));
+                   
+                        instructionStatus[ClockCycle].push_back(instruction.Inst);
+                        instructionStatus[ClockCycle].push_back(to_string(ClockCycle));
 
                         reservationStation.station[currentStation].A = (instruction.label);
                         registerStatus.status["R1"] = currentStation;
@@ -634,6 +629,7 @@ class Tomasulo {
                             instructionStatus[it->second.clockCycle].push_back(to_string(ClockCycle));
                             instructionStatus[it->second.clockCycle].push_back(to_string(it->second.finishesExecutionInCycle));
                             it->second.executed = true;
+                            //PC = it->second.A - startingAddress;
                         }
                     }else if(it->second.Op == "RET"){
                         it->second.finishesExecutionInCycle = ClockCycle + reservationStation.cyclesCallRet;
@@ -807,6 +803,13 @@ class Tomasulo {
                         it->second.clockCycle = 0;
                         it->second.finishesExecutionInCycle = 0;
                         it->second.Result = 0;
+                        if(it->first[0] == 'C' || it->first[0] == 'R') reservationStation.currentCallRet--;
+                        else if(it->first[0] == 'A') reservationStation.currentAdd--;
+                        else if(it->first[0] == 'L') reservationStation.currentLoad--;
+                        else if(it->first[0] == 'D') reservationStation.currentDiv--;
+                        else if(it->first[0] == 'N') reservationStation.currentNand--;
+                        else if(it->first[0] == 'S') reservationStation.currentStore--;
+                        else if(it->first[0] == 'B') reservationStation.currentBne--;
                     }
                 }
             }
@@ -815,7 +818,11 @@ class Tomasulo {
         {
             if(pq.top().Op == "CALL")
             {
-            registerFile[1] = pq.top().Result;
+            if(registerStatus.status["R1"] == pq.top().stationName)
+                    {
+                        registerFile[1] = pq.top().Result;
+                        registerStatus.status["R1"] = "";
+                    }
             //reservationStation.currentCallRet--;
             pleaseFree[pq.top().stationName] = true;
             instructionStatus[pq.top().clockCycle].push_back(to_string(ClockCycle));
@@ -910,12 +917,15 @@ class Tomasulo {
         }
         void printTable()
         {
-             cout << "Cycle \t" << "Instruction \t" <<"Issue \t" <<"Start EX \t"<<"End EX\t"<<"WB\t" <<endl;
+             cout << "Cycle \t" << "Instruction \t\t" <<"Issue \t" <<"Start EX \t"<<"End EX\t"<<"WB\t" <<endl;
             for(auto it = instructionStatus.begin(); it != instructionStatus.end(); it++)
             {
                 // only print if not an empty entry
-                if(it->second.size() > 0)
+                if(it->second.size() == 5){
                     cout << it->first << "\t" << it->second[0] << "\t\t" << it->second[1] << "\t" << it->second[2] << "\t" << it->second[3] << "\t" << it->second[4] << endl;
+                }else if(it->second.size() == 2){
+                    cout << it->first << "\t" << it->second[0] << "\t\t" << it->second[1] << "\tFLUSHED" << endl;
+                }
             }
         }
 };
