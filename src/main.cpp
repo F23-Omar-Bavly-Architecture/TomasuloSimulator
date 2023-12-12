@@ -87,10 +87,12 @@ class Tomasulo {
             string input;
             cout << "Would you like to enter instructions manually (choosing no will require you provide a file)? (y/n): ";
             cin >> input;
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
             while(input != "y" && input != "n"){
                 cout << "Invalid input" << endl;
                 cout << "Would you like to enter instructions manually (choosing no will require you provide a file)? (y/n): ";
                 cin >> input;
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
             }
             if(input == "y"){
                 ReadInstructionsFromUser();
@@ -98,12 +100,14 @@ class Tomasulo {
                 string filename;
                 cout << "Please enter file path relative to this file: ";
                 cin >> filename;
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
                 ReadInstructionsFromFile(filename);
             }
             // prompt for starting address if file is used
             cout << "\n\n----------------------------------------------------------------------------------------\n\n";
             cout << "Please enter starting address(will be used during CALL): ";
             cin >> startingAddress;
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
             // prompt for data to initialize memory
             initializeMem();
             for(auto it = reservationStation.station.begin(); it !=  reservationStation.station.end(); it++)
@@ -869,16 +873,19 @@ class Tomasulo {
             {
                 cout << "Enter address: ";
                 cin >> address;
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
                 while(address < -1 || address > 65535)
                 {
                     cout << "Address must be between 0 and 65535" << endl;
                     cout << "Enter address: ";
                     cin >> address;
+                    cin.ignore(numeric_limits<streamsize>::max(), '\n');
                 }
                 if(address != -1)
                 {
                     cout << "Enter value: ";
                     cin >> Memory[address];
+                    cin.ignore(numeric_limits<streamsize>::max(), '\n');
                 }
                 cout << endl;
             }
@@ -894,6 +901,7 @@ class Tomasulo {
                 cout << "File does not exist" << endl;
                 cout << "Please enter the file path relative to this file:: ";
                 cin >> filename;
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
                 file.open(filename);
             }
             string line;
