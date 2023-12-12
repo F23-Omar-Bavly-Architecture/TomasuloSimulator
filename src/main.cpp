@@ -344,7 +344,7 @@ class Tomasulo {
                         reservationStation.currentCallRet++;
                         issuedQueue.push(instruction);
 
-                    PC++;
+                    //PC++;
                     }
 
                 }
@@ -374,7 +374,7 @@ class Tomasulo {
                     issuedQueue.push(instruction);
 
                     //if(predicting) reservationStation.station[currentStation].isPredicted = true;
-                    PC++;
+                    //PC++;
                 }
             }else if (instruction.op == "ADD"){
                 if(reservationStation.currentAdd < reservationStation.numAdd){
@@ -584,6 +584,7 @@ class Tomasulo {
                 while(it != reservationStation.station.end()){
                     if(it->second.Busy && !it->second.executed && ((predicting.empty()) || !(predicting.front() < it->second.clockCycle)) && it->second.Op == "RET"){
                         it->second.finishesExecutionInCycle = ClockCycle + reservationStation.cyclesCallRet;
+                        //it->second.Result = registerFile[1];
                         instructionStatus[it->second.clockCycle].push_back(to_string(ClockCycle));
                         instructionStatus[it->second.clockCycle].push_back(to_string(it->second.finishesExecutionInCycle));
                         it->second.executed = true;
@@ -812,10 +813,24 @@ class Tomasulo {
         }
         else if(pq.top().stationName[0] == 'C' && pq.top().finishesExecutionInCycle < ClockCycle)
         {
+            if(pq.top().Op == "CALL")
+            {
             registerFile[1] = pq.top().Result;
             //reservationStation.currentCallRet--;
             pleaseFree[pq.top().stationName] = true;
             instructionStatus[pq.top().clockCycle].push_back(to_string(ClockCycle));
+            }else{
+                // RET
+                if(registerStatus.status["R1"] == "")
+                {
+                    RetInFlight = false;
+                    PC = registerFile[1];
+                    //reservationStation.currentCallRet--;
+                    pleaseFree[pq.top().stationName] = true;
+                    instructionStatus[pq.top().clockCycle].push_back(to_string(ClockCycle));
+                }
+            
+            }
         }
         else if(pq.top().stationName[0] == 'R' && pq.top().finishesExecutionInCycle < ClockCycle)
         {
