@@ -798,6 +798,11 @@ class Tomasulo {
                             // remove this inst from the prediction queue
                             if(!predicting.empty())
                                 predicting.pop();
+                        }else if(it->second.stationName[0] == 'L' || it->second.stationName[0] == 'S')
+                        {
+                            // remove this inst from the load store queue
+                            if(!LoadStoreQueue.empty())
+                                LoadStoreQueue.pop();
                         }
                         it->second.Op = "";
                         it->second.Vj = 0;
