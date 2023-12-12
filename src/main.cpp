@@ -617,7 +617,7 @@ class Tomasulo {
                     }else if(it->second.Op == "CALL"){
                         if(it->second.Qj == "" && it->second.Qk == ""){
                             it->second.Result = it->second.PCStart + 1;
-                            it->second.finishesExecutionInCycle = ClockCycle + reservationStation.cyclesCallRet;
+                            it->second.finishesExecutionInCycle = ClockCycle + reservationStation.cyclesCallRet - 1;
                             instructionStatus[it->second.clockCycle].push_back(to_string(ClockCycle));
                             instructionStatus[it->second.clockCycle].push_back(to_string(it->second.finishesExecutionInCycle));
                             it->second.executed = true;
@@ -631,7 +631,7 @@ class Tomasulo {
                     }else if(it->second.Op == "ADD"){
                         if(it->second.Qj == "" && it->second.Qk == ""){
                             it->second.Result = it->second.Vj + it->second.Vk;
-                            it->second.finishesExecutionInCycle = ClockCycle + reservationStation.cyclesAdd;
+                            it->second.finishesExecutionInCycle = ClockCycle + reservationStation.cyclesAdd - 1;
                             instructionStatus[it->second.clockCycle].push_back(to_string(ClockCycle));
                             instructionStatus[it->second.clockCycle].push_back(to_string(it->second.finishesExecutionInCycle));
                             it->second.executed = true;
@@ -676,9 +676,9 @@ class Tomasulo {
                 popLoadStore = false;
             }
         }
-        struct Compare {
-        bool operator()(const ReservationStationEntry& lhs, const ReservationStationEntry& rhs) const {
-            return lhs.finishesExecutionInCycle < rhs.finishesExecutionInCycle; 
+        class myCompare {
+        int operator()(const ReservationStationEntry& lhs, const ReservationStationEntry& rhs) const {
+            return lhs.clockCycle > rhs.clockCycle; 
         }
         };
         void WriteBack() {
@@ -686,7 +686,7 @@ class Tomasulo {
             // create a min heap of reservation stations based on finishesExecutionInCycle
             // populate heap
         //create a priority queue of reservation stations based on finishesExecutionInCycle
-        priority_queue<ReservationStationEntry, vector<ReservationStationEntry>, Compare> pq;
+        priority_queue<ReservationStationEntry, vector<ReservationStationEntry>, myCompare> pq;
 
         for(auto it = reservationStation.station.begin(); it !=  reservationStation.station.end(); it++)
         {
