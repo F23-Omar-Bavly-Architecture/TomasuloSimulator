@@ -293,7 +293,7 @@ class Tomasulo {
                         reservationStation.station[currentStation].Qk = "";
                     }
 
-                    reservationStation.station[currentStation].A = (instruction.offset);
+                    reservationStation.station[currentStation].A = (instruction.label);
                     reservationStation.station[currentStation].Busy = true;
                     //reservationStation.station[currentStation].instruction = instruction;
 
