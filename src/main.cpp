@@ -677,6 +677,7 @@ class Tomasulo {
             }
         }
         class myCompare {
+        public:
         int operator()(const ReservationStationEntry& lhs, const ReservationStationEntry& rhs) const {
             return lhs.clockCycle > rhs.clockCycle; 
         }
