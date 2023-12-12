@@ -857,7 +857,7 @@ class Tomasulo {
             ifstream file(filename);
             while(!file.is_open()){
                 cout << "File does not exist" << endl;
-                cout << "Please enter filename: ";
+                cout << "Please enter the file path relative to this file:: ";
                 cin >> filename;
                 file.open(filename);
             }
