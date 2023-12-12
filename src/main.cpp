@@ -922,7 +922,11 @@ class Tomasulo {
             {
                 // only print if not an empty entry
                 if(it->second.size() == 5){
-                    cout << it->first << "\t" << it->second[0] << "\t\t" << it->second[1] << "\t" << it->second[2] << "\t" << it->second[3] << "\t" << it->second[4] << endl;
+                    if(it->second[0][0] == 'R' || it->second[0][0] == 'C'){
+                        cout << it->first << "\t" << it->second[0] << "\t\t\t" << it->second[1] << "\t" << it->second[2] << "\t" << it->second[3] << "\t" << it->second[4] << endl;
+                    }else{
+                        cout << it->first << "\t" << it->second[0] << "\t\t" << it->second[1] << "\t" << it->second[2] << "\t" << it->second[3] << "\t" << it->second[4] << endl;
+                    }
                 }else if(it->second.size() == 2){
                     cout << it->first << "\t" << it->second[0] << "\t\t" << it->second[1] << "\tFLUSHED" << endl;
                 }
