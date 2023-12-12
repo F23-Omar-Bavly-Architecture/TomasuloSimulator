@@ -580,6 +580,18 @@ class Tomasulo {
         void Execute(){
             // iterate over all busy reservation stations
             if(RetInFlight){
+                auto it = reservationStation.station.begin();
+                while(it != reservationStation.station.end()){
+                    if(it->second.Busy && !it->second.executed && ((predicting.empty()) || !(predicting.front() < it->second.clockCycle)) && it->second.Op == "RET"){
+                        it->second.finishesExecutionInCycle = ClockCycle + reservationStation.cyclesCallRet;
+                        instructionStatus[it->second.clockCycle].push_back(to_string(ClockCycle));
+                        instructionStatus[it->second.clockCycle].push_back(to_string(it->second.finishesExecutionInCycle));
+                        it->second.executed = true;
+                    }
+                    it++;
+                }
+                
+                
                 return;
             }
             auto it = reservationStation.station.begin();
