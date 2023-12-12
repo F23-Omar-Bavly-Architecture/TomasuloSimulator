@@ -778,8 +778,8 @@ class Tomasulo {
         {
             //predicting = false;
             // remove this inst from the prediction queue
-            if(!predicting.empty())
-                predicting.pop();
+if(!predicting.empty())
+            predicting.pop();
             if(pq.top().Result) // taken logic
             {
                 // flush all instructions after the branch
@@ -796,8 +796,8 @@ class Tomasulo {
                         if(it->second.stationName[0] == 'B')
                         {
                             // remove this inst from the prediction queue
-                            if(!predicting.empty())
-                                predicting.pop();
+if(!predicting.empty())
+                            predicting.pop();
                         }else if(it->second.stationName[0] == 'L' || it->second.stationName[0] == 'S')
                         {
                             // remove this inst from the load store queue
@@ -827,7 +827,7 @@ class Tomasulo {
                 //reservationStation.currentBne--;
                 pleaseFree[pq.top().stationName] = true;
                 instructionStatus[pq.top().clockCycle].push_back(to_string(ClockCycle));
-                
+                  
             }
         }
         else if(pq.top().stationName[0] == 'C' && pq.top().finishesExecutionInCycle < ClockCycle)
@@ -970,10 +970,7 @@ int main(){
         tomasulo.RunClockCycle();
     }
     tomasulo.printTable();
-    cout << "Memory: " << tomasulo.Memory[2] << endl;
-    cout << "R1: " << tomasulo.registerFile[1] << endl;
-    cout << "R2: " << tomasulo.registerFile[2] << endl;
-    cout << "R3: " << tomasulo.registerFile[3] << endl;
+    cout << "Last Write Back occured at cycle "<< tomasulo.ClockCycle -1 << " And everything was empty at "<< tomasulo.ClockCycle << endl;
     return 0;
     
 
